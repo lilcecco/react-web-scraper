@@ -45,6 +45,8 @@ export function App() {
         },
     ]); // Da prendere dal database (array di oggetti)
 
+    // new branch update
+
     // Get Process
     const getProcess = (id) => {
         const process = processes.find(process => process.id == id);
