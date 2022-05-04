@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from '../Header';
 import Home from '../Home';
@@ -11,41 +11,26 @@ export const BlacklistContext = React.createContext();
 
 export function App() {
     const [darkMode, setDarkMode] = useState(false);
-    const [processes, setProcesses] = useState([
-        {
-            id: 1,
-            name: "Nutrizionisti Milano",
-            categories: [
-                "email"
-            ],
-            urls: [],
-            status: "START",
-            results: []
-        },
-        {
-            id: 2,
-            name: "Nutrizionisti Roma",
-            categories: [
-                "email",
-                "numbers"
-            ],
-            urls: [],
-            status: "RESULT"
-        },
-    ]); // Da prendere dal database (array di oggetti)
+    const [processes, setProcesses] = useState([]);
 
-    const [blacklist, setBlacklist] = useState([
-        {
-            id: 1,
-            text: "maoce007@gmail.com"
-        },
-        {
-            id: 2,
-            text: "333 333 3333"
-        },
-    ]); // Da prendere dal database (array di oggetti)
+    const [blacklist, setBlacklist] = useState([]);
 
-    // new branch update
+    useEffect(() => {
+        const getProcesses = async () => {
+            const res = await fetch('/data/processes');
+            const data = await res.json();
+            setProcesses(data);
+        }
+
+        const getBlacklist = async () => {
+            const res = await fetch('/data/blacklist');
+            const data = await res.json();
+            setBlacklist(data);
+        }
+
+        getProcesses();
+        getBlacklist();
+    }, []);
 
     // Get Process
     const getProcess = (id) => {

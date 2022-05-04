@@ -9,6 +9,8 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.static(path.join(__dirname, '../client/build')));
 
+app.use('/data', require('./routes/data'));
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
