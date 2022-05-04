@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+*, *::after, *::before {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --color-1: #275BE2;
+    --color-2: #8E8CB9;
+    --color-3: #D0CDE0;
+    --color-4: #F9F7FF;
+}
+
+body {font-family: 'Cairo', sans-serif; font-size: 20px; color: var(--color-2);}
+
+main {
+    width: 1340px;
+    height: 770px;
+    margin: 0 auto;
+}
+
+h1 {font-size: 48px; font-weight: 400; line-height: 1; color: var(--color-1);}
+h2 {font-size: 40px; font-weight: 400; line-height: 1; color: var(--color-1);}
+h3 {font-size: 32px; font-weight: 400; line-height: 1; color: var(--color-1);}
+
+a {text-decoration: none; color: inherit;}
+ul, ol, li {list-style-type: none;}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 160px;
+    height: 50px;
+    border-radius: 25px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--color-4);
+}
+
+.btn-style-1 {
+    background-color: var(--color-1);
+}
+
+.btn-style-2 {
+    width: 120px;
+    background-color: none;
+    border: 2px solid var(--color-1);
+    color: var(--color-1);
+}
+
+input,
+textarea {
+    width: 100%;
+    border-radius: 25px;
+    background-color: var(--color-4);
+    border: none;
+    outline: none;
+    box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.15);
+    font-family: inherit;
+    font-size: 18px;
+    color: var(--color-2);
+}
+
+input {
+    height: 50px;
+    margin-bottom: 30px;
+    padding: 0 20px;
+}
+
+textarea {
+    height: 200px;
+    margin-bottom: 15px;
+    padding: 20px;
+    resize: none;
+}
+
+textarea::-webkit-scrollbar {
+    display: none;
+}
+
+::placeholder {
+    color: var(--color-3);
+}
+
+/* Helpers */
+.hidden {
+    display: none !important;
+}

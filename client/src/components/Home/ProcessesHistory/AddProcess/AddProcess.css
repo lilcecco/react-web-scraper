@@ -1,0 +1,28 @@
+.add-process .button {
+    width: 100%;
+}
+
+.add-process ul {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    line-height: 1;
+}
+
+.add-process li {
+    display: flex;
+    align-items: center;
+}
+
+.check-categories input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    margin-right: 10px;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.check-categories label {
+    cursor: pointer;
+}

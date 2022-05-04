@@ -1,0 +1,10 @@
+.blacklist-container {
+    width: 300px;
+}
+
+.blacklist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}

@@ -1,0 +1,11 @@
+.proc-container {
+    position: relative;
+    width: 600px;
+}
+
+.proc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 60px;
+}

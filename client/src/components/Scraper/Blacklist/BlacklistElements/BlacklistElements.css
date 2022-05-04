@@ -1,0 +1,33 @@
+.blacklist-elements {
+    height: 410px;
+    overflow-y: auto;
+}
+
+.blacklist-elements::-webkit-scrollbar {
+    display: none;
+}
+
+.blacklist-element {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    padding: 0 10px 0 20px;
+    margin-bottom: 20px;
+    border-radius: 30px;
+    background-color: var(--color-4);
+    box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.15);
+}
+
+.blacklist-element .text {
+    width: 220px;
+    overflow-x: hidden;
+}
+
+.blacklist-element .icon {
+    width: 40px;
+    height: 40px;
+    stroke-width: 1.1;
+    color: var(--color-1);
+    cursor: pointer;
+}
