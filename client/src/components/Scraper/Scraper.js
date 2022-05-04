@@ -17,8 +17,13 @@ const Scraper = ({ getProcess, deleteProcess }) => {
     return (
         <main className='scraper'>
             <div className='scraper-icons'>
-                <FiArrowLeft className='icon' onClick={() => navigate('/')}/>
-                <FiX className='icon' onClick={() => onDelete(id)} />
+                <div className='icon-section' onClick={() => navigate('/')}>
+                    <FiArrowLeft className='icon'/>
+                </div>
+                <div className='icon-section' onClick={() => onDelete(id)}>
+                    <div className='text-icon'>delete</div>
+                    <FiX className='icon' />
+                </div>
             </div>
             <Controller process={process} />
             <section className='bottom-section'>

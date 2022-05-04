@@ -4,20 +4,31 @@
 
 .scraper-icons {
     position: absolute;
-    top: -45px;
+    top: -67px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
     width: 100%;
-    height: 35px;
+    height: 40px;
+    color: var(--color-1);
+}
+
+.scraper-icons .icon-section {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    border-radius: 20px;
+    background-color: var(--color-4);
+    cursor: pointer;
 }
 
 .scraper-icons .icon {
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
     stroke-width: 1.5;
-    color: var(--color-1);
-    cursor: pointer;
+}
+
+.scraper-icons .text-icon {
+    margin: 0 5px 3px 5px;
 }
 
 .scraper .bottom-section {
