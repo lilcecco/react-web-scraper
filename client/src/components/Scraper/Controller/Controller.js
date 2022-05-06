@@ -1,7 +1,6 @@
 import './Controller.css';
 
 const Controller = ({ process }) => {
-
   console.log(process);
 
   return (

@@ -9,21 +9,20 @@ import './App.css';
 export const ProcessesContext = React.createContext();
 export const BlacklistContext = React.createContext();
 
-export function App() {
+export const App = () => {
     const [darkMode, setDarkMode] = useState(false);
     const [processes, setProcesses] = useState([]);
-
     const [blacklist, setBlacklist] = useState([]);
 
     useEffect(() => {
         const getProcesses = async () => {
-            const res = await fetch('/data/processes');
+            const res = await fetch('/api/data/processes');
             const data = await res.json();
             setProcesses(data);
         }
 
         const getBlacklist = async () => {
-            const res = await fetch('/data/blacklist');
+            const res = await fetch('/api/data/blacklist');
             const data = await res.json();
             setBlacklist(data);
         }
@@ -34,36 +33,85 @@ export function App() {
 
     // Get Process
     const getProcess = (id) => {
-        const process = processes.find(process => process.id == id);
+        const process = processes.find(process => process.id === id);
+
         return process;
     }
 
     // Add New Process
-    const addProcess = (process) => {
-        setProcesses([ process, ...processes ]);
+    const addProcess = async (process) => {
+        const res = await fetch('/api/data/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(process)
+        });
+        const data = await res.json();
 
-        // aggiungere richiesta server
+        if (data?.error) {
+            alert(data.error);
+            return;
+        }
+
+        setProcesses([ process, ...processes ]);
     }
 
     // Delete Process
-    const deleteProcess = (id) => {
-        setProcesses(processes.filter(process => process.id != id));
+    const deleteProcess = async (id) => {
+        const res = await fetch('/api/data/process', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id })
+        });
+        const data = await res.json();
 
-        // aggiungere richiesta server
+        if (data?.error) {
+            alert(data.error);
+            return;
+        }
+
+        setProcesses(processes.filter(process => process.id !== id));
     }
 
     // Add Blacklist Element
-    const addBlacklistElement = (blacklistElem) => {
-        setBlacklist([ blacklistElem, ...blacklist ]);
+    const addBlacklistElement = async (blacklistElem) => {
+        const res = await fetch('/api/data/blacklist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(blacklistElem)
+        });
+        const data = await res.json();
 
-        //aggiungere richiesta server
+        if (data?.error) {
+            alert(data.error);
+            return;
+        }
+
+        setBlacklist([ blacklistElem, ...blacklist ]);
     }
 
     // Delete Blacklist Element
-    const deleteBlacklistElem = (id) => {
-        setBlacklist(blacklist.filter(blacklistElem => blacklistElem.id != id));
+    const deleteBlacklistElem = async (id) => {
+        const res = await fetch('/api/data/blacklist', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+
+        if (data?.error) {
+            alert(data.error);
+            return;
+        }
         
-        //aggiungere richiesta server
+        setBlacklist(blacklist.filter(blacklistElem => blacklistElem.id !== id));
     }
 
     const providerProcesses = useMemo(() => { return { processes, addProcess } }, [processes]);

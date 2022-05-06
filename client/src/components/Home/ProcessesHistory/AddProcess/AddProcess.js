@@ -31,7 +31,7 @@ const AddProcess = ({ onAdd }) => {
             return;
         }
 
-        onAdd({id: uuidv4(), name, categories: parsedCategories, urls: parsedUrls, status: "START" });
+        onAdd({ id: uuidv4(), name, categories: parsedCategories, urls: parsedUrls, status: 'START', results: [] });
 
         // reset default
         setName('');

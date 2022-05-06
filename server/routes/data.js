@@ -1,43 +1,18 @@
 const express = require('express');
+const { getProcesses, getBlacklist, setProcess, deleteProcess, setBlacklistElement, deleteBlacklistElement } = require('../controllers/data');
 
 const router = express.Router();
 
-router.get('/processes', (req, res) => {
-    res.json([
-        {
-            id: 1,
-            name: "Autoscuole Milano",
-            categories: [
-                "email"
-            ],
-            urls: [],
-            status: "START",
-            results: []
-        },
-        {
-            id: 2,
-            name: "Autoscuole Roma",
-            categories: [
-                "email",
-                "numbers"
-            ],
-            urls: [],
-            status: "RESULT"
-        },
-    ])
+router.get('/processes', getProcesses);
+router.get('/blacklist', getBlacklist);
+
+router.post('/process', setProcess);
+router.post('/blacklist', setBlacklistElement);
+router.post('/get-process', (req, res) => {
+    console.log('hi there');
 });
 
-router.get('/blacklist', (req, res) => {
-    res.json([
-        {
-            id: 1,
-            text: "maoce007@gmail.com"
-        },
-        {
-            id: 2,
-            text: "333 333 3333"
-        },
-    ])
-});
+router.delete('/process', deleteProcess);
+router.delete('/blacklist', deleteBlacklistElement);
 
 module.exports = router;
