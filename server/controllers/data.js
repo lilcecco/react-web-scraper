@@ -1,4 +1,3 @@
-const { json } = require('express/lib/response');
 const mysql = require('mysql');
 
 const db = mysql.createConnection({

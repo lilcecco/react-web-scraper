@@ -6,11 +6,8 @@ const router = express.Router();
 router.get('/processes', getProcesses);
 router.get('/blacklist', getBlacklist);
 
-router.post('/process', setProcess);
+router.post('/processes', setProcess);
 router.post('/blacklist', setBlacklistElement);
-router.post('/get-process', (req, res) => {
-    console.log('hi there');
-});
 
 router.delete('/process', deleteProcess);
 router.delete('/blacklist', deleteBlacklistElement);

@@ -4,7 +4,6 @@
 
 .add-process ul {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 40px;
     line-height: 1;
 }
@@ -12,6 +11,7 @@
 .add-process li {
     display: flex;
     align-items: center;
+    margin-right: 60px;
 }
 
 .check-categories input {

@@ -8,8 +8,6 @@ const AddProcess = ({ onAdd }) => {
     const [categories, setCategories] = useState({
         email: false,
         numbers: false,
-        facebook: false,
-        instagram: false
     });
 
     const onSubmit = (e) => {
@@ -31,7 +29,7 @@ const AddProcess = ({ onAdd }) => {
             return;
         }
 
-        onAdd({ id: uuidv4(), name, categories: parsedCategories, urls: parsedUrls, status: 'START', results: [] });
+        onAdd({ id: uuidv4(), name, categories: parsedCategories, urls: parsedUrls, status: 'START', results: {} });
 
         // reset default
         setName('');
@@ -39,8 +37,6 @@ const AddProcess = ({ onAdd }) => {
         setCategories({
             email: false,
             numbers: false,
-            facebook: false,
-            instagram: false
         });
     }
 
@@ -75,24 +71,6 @@ const AddProcess = ({ onAdd }) => {
                         onChange={(e) => setCategories({ ...categories, numbers: e.currentTarget.checked })}
                     />
                     <label htmlFor='numbers-checkbox'>Numbers</label>
-                </li>
-                <li>
-                    <input
-                        type='checkbox'
-                        id='facebook-checkbox'
-                        checked={categories.facebook}
-                        onChange={(e) => setCategories({ ...categories, facebook: e.currentTarget.checked })}
-                    />
-                    <label htmlFor='facebook-checkbox'>Facebook</label>
-                </li>
-                <li>
-                    <input
-                        type='checkbox'
-                        id='instagram-checkbox'
-                        checked={categories.instagram}
-                        onChange={(e) => setCategories({ ...categories, instagram: e.currentTarget.checked })}
-                    />
-                    <label htmlFor='instagram-checkbox'>Instagram</label>
                 </li>
             </ul>
             <input

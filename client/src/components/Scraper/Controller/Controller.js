@@ -1,7 +1,6 @@
 import './Controller.css';
 
-const Controller = ({ process }) => {
-  console.log(process);
+const Controller = ({ process, onToggle }) => {
 
   return (
     <div className='controller-container'>
@@ -13,7 +12,9 @@ const Controller = ({ process }) => {
         <div className='status-bar'>
           <div className='track' style={{ width: '100px' }}></div>
         </div>
-        <div className='button btn-style-1'>{process.status}</div>
+        <div className='button btn-style-1' onClick={onToggle}>
+          {process.status}
+        </div>
       </div>
     </div>
   );

@@ -31,16 +31,14 @@ export const App = () => {
         getBlacklist();
     }, []);
 
-    // Get Process
     const getProcess = (id) => {
         const process = processes.find(process => process.id === id);
-
         return process;
     }
 
     // Add New Process
     const addProcess = async (process) => {
-        const res = await fetch('/api/data/process', {
+        const res = await fetch('/api/data/processes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -114,6 +112,25 @@ export const App = () => {
         setBlacklist(blacklist.filter(blacklistElem => blacklistElem.id !== id));
     }
 
+    // Scrape Data
+    const scrapeData = async (id) => {
+        const res = await fetch('/api/scraper', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+
+        if (data?.error) {
+            alert(data.error);
+            return;
+        }
+
+        setProcesses(processes.map(process => process.id === data.id ? { ...process, status: data.status, results: data.results } : process));
+    }
+
     const providerProcesses = useMemo(() => { return { processes, addProcess } }, [processes]);
     const providerBalcklist = useMemo(() => { return { blacklist, deleteBlacklistElem, addBlacklistElement } }, [blacklist]);
 
@@ -127,9 +144,9 @@ export const App = () => {
                             <Home />
                         </ProcessesContext.Provider>
                     )} />
-                    <Route path='/scraper/:id' element={(
+                    <Route path='/process/:id' element={(
                         <BlacklistContext.Provider value={providerBalcklist} >
-                            <Scraper getProcess={getProcess} deleteProcess={deleteProcess} />
+                            <Scraper getProcess={getProcess} deleteProcess={deleteProcess} scrapeData={scrapeData} />
                         </BlacklistContext.Provider>
                     )} />
                     <Route path='*' element={<div>404 error</div>} />
