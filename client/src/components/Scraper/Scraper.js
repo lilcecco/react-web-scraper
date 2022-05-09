@@ -37,8 +37,8 @@ const Scraper = ({ getProcess, deleteProcess, scrapeData }) => {
             alert('The process is already complete');
             return;
         };
-        alert('Process started...');
         scrapeData(id);
+        alert('Process started...');
     }
 
     return (

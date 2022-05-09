@@ -3,29 +3,29 @@ import { v4 as uuidv4 } from 'uuid';
 import './AddBlacklistElement.css';
 
 const AddBlacklistElement = ({ onAdd }) => {
-  const [text, setText] = useState('');
+  const [url, setUrl] = useState('');
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (!text) {
+    if (!url) {
       alert('You have to complete all fields');
       return;
     }
 
-    onAdd({ id: uuidv4(), text });
+    onAdd({ id: uuidv4(), url });
 
     // reset default
-    setText('');
+    setUrl('');
   }
 
   return (
     <form className='add-blacklist-element' onSubmit={onSubmit}>
       <input
         type='text'
-        placeholder='Insert text'
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+        placeholder='Insert url'
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
       />
       <input
         type='submit'

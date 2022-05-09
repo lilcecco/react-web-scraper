@@ -27,47 +27,63 @@ exports.getScrapedData = (req, res) => {
         const process = result[0];
         const urls = JSON.parse(process.urls);
         const categories = JSON.parse(process.categories);
-        const results = JSON.parse(process.results);
+        const data = JSON.parse(process.results);
 
-        const scrapeData = async () => {
-            for (let url of urls) {
-                // check protocol
-                if (!/^(http\:|https\:)/.test(url)) url = `http://${url}`;
+        // get blacklist data
+        db.query('SELECT url FROM blacklist', (err, results) => {
+            if (err) {
+                res.json({ error: 'Start process throw error, try again' });
+                return;
+            }
+            
+            const blacklist = results;
 
-                const rawData = await getRawData(url);
-                // catch fetch error
-                if (!rawData) continue;
+            // scrape data
+            const scrapeData = async () => {
+                main: for (let url of urls) {
+                    // check blacklist
+                    for (let blacklistElem of blacklist) {
+                        if (blacklistElem.url === url) continue main;
+                    }
 
-                if (categories.includes('email')) {
-                    const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,4}/.exec(rawData)?.[0];
-                    
-                    if (!results?.email) results.email = [];
-                    if (email) results.email.push(email);
+                    // check protocol
+                    if (!/^(http\:|https\:)/.test(url)) url = `http://${url}`;
+    
+                    const rawData = await getRawData(url);
+                    // catch fetch error
+                    if (!rawData) continue;
+    
+                    if (categories.includes('email')) {
+                        const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,4}/.exec(rawData)?.[0];
+                        
+                        if (!data?.email) data.email = [];
+                        if (email) data.email.push(email);
+                    }
+    
+                    if (categories.includes('numbers')) {
+                        const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
+                        
+                        if (!data?.numbers) data.numbers = [];
+                        if (number) data.numbers.push(number);
+                    }
                 }
-
-                if (categories.includes('numbers')) {
-                    const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
+    
+                // update status
+                const status = 'DONE';
+                console.log(data); //check
+    
+                db.query(`UPDATE processes SET results = ?, status = ? WHERE id = ?`, [JSON.stringify(data), status, id], (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        res.json({ error: 'Start process throw error, try again' });
+                        return;
+                    }
                     
-                    if (!results?.numbers) results.numbers = [];
-                    if (number) results.numbers.push(number);
-                }
+                    res.json({ ...process, categories, urls, status, results: data });
+                });
             }
 
-            // update status
-            const status = 'DONE';
-            console.log(results);
-
-            db.query(`UPDATE processes SET results = ?, status = ? WHERE id = ?`, [JSON.stringify(results), status, id], (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.json({ error: 'Start process throw error, try again' });
-                    return;
-                }
-                
-                res.json({ ...process, categories, urls, status, results });
-            });
-        }
-    
-        scrapeData();
+            scrapeData();
+        });
     });
 }

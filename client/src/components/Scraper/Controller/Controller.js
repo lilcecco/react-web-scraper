@@ -10,7 +10,7 @@ const Controller = ({ process, onToggle }) => {
       </div>
       <div className='controller'>
         <div className='status-bar'>
-          <div className='track' style={{ width: '100px' }}></div>
+          <div className='track' style={{ width: '50px' }}></div>
         </div>
         <div className='button btn-style-1' onClick={onToggle}>
           {process.status}

@@ -22,7 +22,11 @@ const Blacklist = () => {
                     {showAddBlacklistElem ? 'CLOSE' : 'ADD'}
                 </div>
             </div>
-            {showAddBlacklistElem ? <AddBlacklistElement onAdd={onAdd} /> : <BlacklistElements blacklist={blacklist} onDelete={deleteBlacklistElem} />}
+            {showAddBlacklistElem ? (
+                <AddBlacklistElement onAdd={onAdd} />
+            ) : (
+                <BlacklistElements blacklist={blacklist} onDelete={deleteBlacklistElem} />
+            )}
         </div>
     );
 }
