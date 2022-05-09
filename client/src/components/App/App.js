@@ -119,7 +119,7 @@ export const App = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id })
+            body: JSON.stringify({ id, blacklist: blacklist.map(blacklistElem => blacklistElem.url) })
         });
         const data = await res.json();
 

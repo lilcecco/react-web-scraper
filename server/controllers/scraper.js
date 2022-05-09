@@ -16,74 +16,63 @@ exports.getScrapedData = (req, res) => {
             .catch(() => null);
     };
 
-    const { id } = req.body;
+    const { id, blacklist } = req.body;
 
-    db.query('SELECT * FROM processes WHERE id = ?', [id], (err, result) => {
+    db.query('SELECT * FROM processes WHERE id = ?', [id], (err, results) => {
         if (err) {
             res.json({ error: 'Start process throw error, try again' });
             return;
         }
 
-        const process = result[0];
+        const process = results[0];
         const urls = JSON.parse(process.urls);
         const categories = JSON.parse(process.categories);
         const data = JSON.parse(process.results);
 
-        // get blacklist data
-        db.query('SELECT url FROM blacklist', (err, results) => {
-            if (err) {
-                res.json({ error: 'Start process throw error, try again' });
-                return;
-            }
-            
-            const blacklist = results;
+        // scrape data
+        const scrapeData = async () => {
 
-            // scrape data
-            const scrapeData = async () => {
-                main: for (let url of urls) {
-                    // check blacklist
-                    for (let blacklistElem of blacklist) {
-                        if (blacklistElem.url === url) continue main;
-                    }
+            for (let url of urls) {
+                // check urls blacklist
+                if (blacklist.includes(url)) continue;
 
-                    // check protocol
-                    if (!/^(http\:|https\:)/.test(url)) url = `http://${url}`;
-    
-                    const rawData = await getRawData(url);
-                    // catch fetch error
-                    if (!rawData) continue;
-    
-                    if (categories.includes('email')) {
-                        const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,4}/.exec(rawData)?.[0];
-                        
-                        if (!data?.email) data.email = [];
-                        if (email) data.email.push(email);
-                    }
-    
-                    if (categories.includes('numbers')) {
-                        const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
-                        
-                        if (!data?.numbers) data.numbers = [];
-                        if (number) data.numbers.push(number);
-                    }
-                }
-    
-                // update status
-                const status = 'DONE';
-                console.log(data); //check
-    
-                db.query(`UPDATE processes SET results = ?, status = ? WHERE id = ?`, [JSON.stringify(data), status, id], (err, result) => {
-                    if (err) {
-                        console.log(err);
-                        res.json({ error: 'Start process throw error, try again' });
-                        return;
-                    }
+                // check protocol
+                if (!/^(http\:|https\:)/.test(url)) url = `http://${url}`;
+
+                const rawData = await getRawData(url);
+                // catch fetch error
+                if (!rawData) continue;
+
+                if (categories.includes('email')) {
+                    const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,4}/.exec(rawData)?.[0];
                     
-                    res.json({ ...process, categories, urls, status, results: data });
-                });
+                    if (!data?.email) data.email = [];
+                    if (email) data.email.push(email);
+                }
+
+                if (categories.includes('numbers')) {
+                    const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
+                    
+                    if (!data?.numbers) data.numbers = [];
+                    if (number) data.numbers.push(number);
+                }
             }
 
-            scrapeData();
-        });
+            // update status
+            const status = 'DONE';
+            console.log(data); //check
+
+            db.query(`UPDATE processes SET results = ?, status = ? WHERE id = ?`, [JSON.stringify(data), status, id], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ error: 'Start process throw error, try again' });
+                    return;
+                }
+                
+                res.json({ ...process, categories, urls, status, results: data });
+            });
+        }
+
+        scrapeData();
     });
 }
