@@ -6,7 +6,7 @@ const Controller = ({ process, onToggle }) => {
     <div className='controller-container'>
       <div>
         <h2>{process.name.toUpperCase()}</h2>
-        <div>{process.categories.join(' - ')}</div>
+        <div>email</div>
       </div>
       <div className='controller'>
         <div className='status-bar'>

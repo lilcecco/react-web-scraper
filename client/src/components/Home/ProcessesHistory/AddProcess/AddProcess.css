@@ -2,18 +2,6 @@
     width: 100%;
 }
 
-.add-process ul {
-    display: flex;
-    margin-bottom: 40px;
-    line-height: 1;
-}
-
-.add-process li {
-    display: flex;
-    align-items: center;
-    margin-right: 60px;
-}
-
 .check-categories input {
     width: 18px;
     height: 18px;

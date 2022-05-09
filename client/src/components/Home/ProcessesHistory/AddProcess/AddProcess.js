@@ -5,10 +5,6 @@ import './AddProcess.css';
 const AddProcess = ({ onAdd }) => {
     const [name, setName] = useState('');
     const [urls, setUrls] = useState('');
-    const [categories, setCategories] = useState({
-        email: false,
-        numbers: false,
-    });
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -19,25 +15,11 @@ const AddProcess = ({ onAdd }) => {
             return;
         }
 
-        let parsedCategories = [];
-        for (let [key, value] of Object.entries(categories)) {
-            if (value) parsedCategories.push(key);
-        }
-
-        if (parsedCategories.length === 0) {
-            alert('You have to select almost one category');
-            return;
-        }
-
-        onAdd({ id: uuidv4(), name, categories: parsedCategories, urls: parsedUrls, status: 'START', results: {} });
+        onAdd({ id: uuidv4(), name, urls: parsedUrls, status: 'START', results: {} });
 
         // reset default
         setName('');
         setUrls('');
-        setCategories({
-            email: false,
-            numbers: false,
-        });
     }
 
     return (
@@ -53,26 +35,6 @@ const AddProcess = ({ onAdd }) => {
                 value={urls}
                 onChange={(e) => setUrls(e.target.value)}
             />
-            <ul className='check-categories'>
-                <li>
-                    <input
-                        type='checkbox'
-                        id='email-checkbox'
-                        checked={categories.email}
-                        onChange={(e) => setCategories({ ...categories, email: e.currentTarget.checked })}
-                    />
-                    <label htmlFor='email-checkbox'>Email</label>
-                </li>
-                <li>
-                    <input
-                        type='checkbox'
-                        id='numbers-checkbox'
-                        checked={categories.numbers}
-                        onChange={(e) => setCategories({ ...categories, numbers: e.currentTarget.checked })}
-                    />
-                    <label htmlFor='numbers-checkbox'>Numbers</label>
-                </li>
-            </ul>
             <input
                 type='submit'
                 className='button btn-style-1'

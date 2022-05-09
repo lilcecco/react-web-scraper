@@ -18,8 +18,7 @@ const Scraper = ({ getProcess, deleteProcess, scrapeData }) => {
         const updResults = () => {
             if (process) {
                 const email = process.results?.email ?? [];
-                const numbers = process.results?.numbers ?? [];
-                setResults([...email, ...numbers]);
+                setResults(email);
             }
         }
         updResults();

@@ -26,7 +26,6 @@ exports.getScrapedData = (req, res) => {
 
         const process = results[0];
         const urls = JSON.parse(process.urls);
-        const categories = JSON.parse(process.categories);
         const data = JSON.parse(process.results);
 
         // scrape data
@@ -43,19 +42,18 @@ exports.getScrapedData = (req, res) => {
                 // catch fetch error
                 if (!rawData) continue;
 
-                if (categories.includes('email')) {
-                    const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,4}/.exec(rawData)?.[0];
-                    
-                    if (!data?.email) data.email = [];
-                    if (email) data.email.push(email);
-                }
+                // scrape email
+                const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,4}/.exec(rawData)?.[0];
+                if (!data?.email) data.email = [];
+                if (email) data.email.push(email);
 
-                if (categories.includes('numbers')) {
-                    const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
-                    
-                    if (!data?.numbers) data.numbers = [];
-                    if (number) data.numbers.push(number);
-                }
+                /*
+                 * Numbers scraper (dismissed)
+                 * 
+                 * const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
+                 * if (!data?.numbers) data.numbers = [];
+                 * if (number) data.numbers.push(number);
+                 */
             }
 
             // update status
@@ -69,7 +67,7 @@ exports.getScrapedData = (req, res) => {
                     return;
                 }
                 
-                res.json({ ...process, categories, urls, status, results: data });
+                res.json({ ...process, urls, status, results: data });
             });
         }
 

@@ -12,7 +12,7 @@ const Process = ({ process }) => {
       <div className='process'>
         <h3 className='name'>{process.name}</h3>
         <div style={{ color: 'var(--color-3)' }}>
-          {process.categories.join(' - ')}
+          email
         </div>
         <div className='status'>
           Status

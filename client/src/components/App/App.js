@@ -52,7 +52,7 @@ export const App = () => {
             return;
         }
 
-        setProcesses([ process, ...processes ]);
+        setProcesses([process, ...processes]);
     }
 
     // Delete Process
@@ -90,7 +90,7 @@ export const App = () => {
             return;
         }
 
-        setBlacklist([ blacklistElem, ...blacklist ]);
+        setBlacklist([blacklistElem, ...blacklist]);
     }
 
     // Delete Blacklist Element
@@ -108,7 +108,7 @@ export const App = () => {
             alert(data.error);
             return;
         }
-        
+
         setBlacklist(blacklist.filter(blacklistElem => blacklistElem.id !== id));
     }
 

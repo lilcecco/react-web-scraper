@@ -11,7 +11,7 @@ exports.getProcesses = (req, res) => {
     db.query('SELECT * FROM processes', (err, results) => {
         if (err) throw err; // da cambiare
         
-        const parsedResults = results.map(result => {return { ...result, categories: JSON.parse(result.categories), urls: JSON.parse(result.urls), results: JSON.parse(result.results) }});
+        const parsedResults = results.map(result => {return { ...result, urls: JSON.parse(result.urls), results: JSON.parse(result.results) }});
         res.json(parsedResults);
     });
 }
@@ -26,7 +26,7 @@ exports.getBlacklist = (req, res) => {
 
 exports.setProcess = (req, res) => {
     const process = req.body;
-    const parsedProcess = { ...process, categories: JSON.stringify(process.categories), urls: JSON.stringify(process.urls), results: JSON.stringify(process.results) };
+    const parsedProcess = { ...process, urls: JSON.stringify(process.urls), results: JSON.stringify(process.results) };
 
     db.query('INSERT INTO processes SET ?', parsedProcess, (err, result) => {
         if (err) {
