@@ -26,7 +26,7 @@ exports.getScrapedData = (req, res) => {
 
         const process = results[0];
         const urls = JSON.parse(process.urls);
-        const data = JSON.parse(process.results);
+        const data = JSON.parse(process.results) ?? [];
 
         // scrape data
         const scrapeData = async () => {
@@ -44,8 +44,7 @@ exports.getScrapedData = (req, res) => {
 
                 // scrape email
                 const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,4}/.exec(rawData)?.[0];
-                if (!data?.email) data.email = [];
-                if (email) data.email.push(email);
+                if (email) data.push(email);
 
                 /*
                  * Numbers scraper (dismissed)
@@ -62,7 +61,6 @@ exports.getScrapedData = (req, res) => {
 
             db.query(`UPDATE processes SET results = ?, status = ? WHERE id = ?`, [JSON.stringify(data), status, id], (err, result) => {
                 if (err) {
-                    console.log(err);
                     res.json({ error: 'Start process throw error, try again' });
                     return;
                 }

@@ -14,6 +14,18 @@ export const App = () => {
     const [processes, setProcesses] = useState([]);
     const [blacklist, setBlacklist] = useState([]);
 
+    // Get Balcklist
+    useEffect(() => {
+        const getBlacklist = async () => {
+            const res = await fetch('/api/data/blacklist');
+            const data = await res.json();
+            setBlacklist(data);
+        }
+
+        getBlacklist();
+    }, []);
+
+    // Get Processes (on change)
     useEffect(() => {
         const getProcesses = async () => {
             const res = await fetch('/api/data/processes');
@@ -21,20 +33,8 @@ export const App = () => {
             setProcesses(data);
         }
 
-        const getBlacklist = async () => {
-            const res = await fetch('/api/data/blacklist');
-            const data = await res.json();
-            setBlacklist(data);
-        }
-
         getProcesses();
-        getBlacklist();
-    }, []);
-
-    const getProcess = (id) => {
-        const process = processes.find(process => process.id === id);
-        return process;
-    }
+    }, [processes]);
 
     // Add New Process
     const addProcess = async (process) => {
@@ -71,7 +71,10 @@ export const App = () => {
             return;
         }
 
-        setProcesses(processes.filter(process => process.id !== id));
+        // update processes
+        setProcesses([]);
+
+        // setProcesses(processes.filter(process => process.id !== id));
     }
 
     // Add Blacklist Element
@@ -128,7 +131,8 @@ export const App = () => {
             return;
         }
 
-        setProcesses(processes.map(process => process.id === data.id ? { ...process, status: data.status, results: data.results } : process));
+        // update processes
+        setProcesses([]);
     }
 
     const providerProcesses = useMemo(() => { return { processes, addProcess } }, [processes]);
@@ -146,7 +150,7 @@ export const App = () => {
                     )} />
                     <Route path='/process/:id' element={(
                         <BlacklistContext.Provider value={providerBalcklist} >
-                            <Scraper getProcess={getProcess} deleteProcess={deleteProcess} scrapeData={scrapeData} />
+                            <Scraper processes={processes} deleteProcess={deleteProcess} scrapeData={scrapeData} />
                         </BlacklistContext.Provider>
                     )} />
                     <Route path='*' element={<div>404 error</div>} />

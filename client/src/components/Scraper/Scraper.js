@@ -1,28 +1,14 @@
-import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FiArrowLeft, FiX } from 'react-icons/fi';
 import Controller from './Controller';
 import Blacklist from './Blacklist';
 import './Scraper.css';
 
-const Scraper = ({ getProcess, deleteProcess, scrapeData }) => {
+const Scraper = ({ processes, deleteProcess, scrapeData }) => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [results, setResults] = useState([]);
 
-    // Get Process
-    const process = getProcess(id);
-
-    // Update Results
-    useEffect(() => {
-        const updResults = () => {
-            if (process) {
-                const email = process.results?.email ?? [];
-                setResults(email);
-            }
-        }
-        updResults();
-    }, [process]);
+    const process = processes.find(process => process.id === id);
 
     // Delete Process
     const onDelete = (id) => {
@@ -54,7 +40,7 @@ const Scraper = ({ getProcess, deleteProcess, scrapeData }) => {
                 </div>
                 <Controller process={process} onToggle={onToggle} />
                 <section className='bottom-section'>
-                    <textarea className='console-container' value={results.join('\n')} readOnly />
+                    <textarea className='console-container' value={process.results.join('\n')} readOnly />
                     <Blacklist />
                 </section>
             </main>}

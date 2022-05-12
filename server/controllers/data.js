@@ -28,7 +28,7 @@ exports.setProcess = (req, res) => {
     const process = req.body;
     const parsedProcess = { ...process, urls: JSON.stringify(process.urls), results: JSON.stringify(process.results) };
 
-    db.query('INSERT INTO processes SET ?', parsedProcess, (err, result) => {
+    db.query('INSERT INTO processes SET ?', parsedProcess, (err, results) => {
         if (err) {
             res.json({ error: 'Adding new process throw error, try again' });
             return;

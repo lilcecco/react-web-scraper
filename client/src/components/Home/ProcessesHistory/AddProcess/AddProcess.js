@@ -15,7 +15,7 @@ const AddProcess = ({ onAdd }) => {
             return;
         }
 
-        onAdd({ id: uuidv4(), name, urls: parsedUrls, status: 'START', results: {} });
+        onAdd({ id: uuidv4(), name, urls: parsedUrls, status: 'START', results: [] });
 
         // reset default
         setName('');
