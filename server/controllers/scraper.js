@@ -27,11 +27,20 @@ exports.getScrapedData = (req, res) => {
         const process = results[0];
         const urls = JSON.parse(process.urls);
         const data = JSON.parse(process.results) ?? [];
+        let status = process.status;
 
         // scrape data
         const scrapeData = async () => {
 
             for (let url of urls) {
+                // change status
+                if (urls.indexOf(url) === 0) {
+                    status = 'RUNNING';
+                    db.query(`UPDATE processes SET status = ? WHERE id = ?`, [status, id], (err, results) => {
+                        if (err) throw err; // da cambiare
+                    });
+                }
+
                 // check urls blacklist
                 if (blacklist.includes(url)) continue;
 
@@ -56,7 +65,7 @@ exports.getScrapedData = (req, res) => {
             }
 
             // update status
-            const status = 'DONE';
+            status = 'DONE';
             console.log(data); //check
 
             db.query(`UPDATE processes SET results = ?, status = ? WHERE id = ?`, [JSON.stringify(data), status, id], (err, result) => {

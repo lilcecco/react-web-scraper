@@ -1,6 +1,6 @@
 import './Controller.css';
 
-const Controller = ({ process, onToggle }) => {
+const Controller = ({ scraperStatus, process, onToggle }) => {
 
   return (
     <div className='controller-container'>
@@ -9,8 +9,8 @@ const Controller = ({ process, onToggle }) => {
         <div>email</div>
       </div>
       <div className='controller'>
-        <div className='status-bar'>
-          <div className='track' style={{ width: '50px' }}></div>
+        <div className='status-bar-container'>
+          <div className={`status-bar ${scraperStatus ? 'status-bar--on' : ''}`}></div>
         </div>
         <div className='button btn-style-1' onClick={onToggle}>
           {process.status}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 const Process = ({ process }) => {
 
   const statusColor = () => {
-    if (process.status === 'START') return '#FE6666';
+    if (process.status === 'START' || process.status === 'RUNNING') return '#FE6666';
     if (process.status === 'DONE') return '#61EB55';
   }
 

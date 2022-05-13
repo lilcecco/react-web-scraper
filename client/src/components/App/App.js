@@ -16,25 +16,21 @@ export const App = () => {
 
     // Get Balcklist
     useEffect(() => {
+        const getProcesses = async () => {
+            const res = await fetch('/api/data/processes');
+            const data = await res.json();
+            setProcesses(data);
+        }
+        
         const getBlacklist = async () => {
             const res = await fetch('/api/data/blacklist');
             const data = await res.json();
             setBlacklist(data);
         }
 
+        getProcesses();
         getBlacklist();
     }, []);
-
-    // Get Processes (on change)
-    useEffect(() => {
-        const getProcesses = async () => {
-            const res = await fetch('/api/data/processes');
-            const data = await res.json();
-            setProcesses(data);
-        }
-
-        getProcesses();
-    }, [processes]);
 
     // Add New Process
     const addProcess = async (process) => {
@@ -72,9 +68,7 @@ export const App = () => {
         }
 
         // update processes
-        setProcesses([]);
-
-        // setProcesses(processes.filter(process => process.id !== id));
+        setProcesses(processes.filter(process => process.id !== id));
     }
 
     // Add Blacklist Element
@@ -132,7 +126,7 @@ export const App = () => {
         }
 
         // update processes
-        setProcesses([]);
+        setProcesses(processes.map(process => process.id === id ? data : process));
     }
 
     const providerProcesses = useMemo(() => { return { processes, addProcess } }, [processes]);
@@ -150,7 +144,7 @@ export const App = () => {
                     )} />
                     <Route path='/process/:id' element={(
                         <BlacklistContext.Provider value={providerBalcklist} >
-                            <Scraper processes={processes} deleteProcess={deleteProcess} scrapeData={scrapeData} />
+                            <Scraper processes={processes} setProcesses={setProcesses} deleteProcess={deleteProcess} scrapeData={scrapeData} />
                         </BlacklistContext.Provider>
                     )} />
                     <Route path='*' element={<div>404 error</div>} />
