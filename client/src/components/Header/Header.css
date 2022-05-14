@@ -34,7 +34,8 @@ nav ul {
 }
 
 nav li {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     margin-left: 60px;
     font-size: 24px;
     color: var(--color-1);

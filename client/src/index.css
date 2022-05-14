@@ -52,6 +52,7 @@ ul, ol, li {list-style-type: none;}
 
 form .button {
     width: 100%;
+    margin: 0;
 }
 
 input,
@@ -89,6 +90,5 @@ textarea::-webkit-scrollbar {
 }
 
 /* Helpers */
-.hidden {
-    display: none !important;
-}
+.hidden {display: none !important;}
+.img-res {width: 100%; height: 100%; object-fit: cover;}

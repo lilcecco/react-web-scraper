@@ -1,0 +1,30 @@
+.login-form {
+    width: 460px;
+}
+
+.login-form h1 {
+    color: var(--color-2);
+}
+
+.login-form .sub {
+    margin-bottom: 30px;
+    color: var(--color-3);
+}
+
+.login-form .button {
+    margin-top: 20px;
+}
+
+.login-form .forgot-passwd {
+    text-align: right;
+    font-size: 14px;
+    color: var(--color-3);
+}
+
+.sign-up-link {
+    margin-top: 60px;
+}
+
+.sign-up-link span {
+    color: var(--color-1);
+}

@@ -4,6 +4,7 @@ import Header from '../Header';
 import Home from '../Home';
 import Scraper from '../Scraper';
 import Footer from '../Footer';
+import Login from '../Login';
 import './App.css';
 
 export const ProcessesContext = React.createContext();
@@ -21,7 +22,7 @@ export const App = () => {
             const data = await res.json();
             setProcesses(data);
         }
-        
+
         const getBlacklist = async () => {
             const res = await fetch('/api/data/blacklist');
             const data = await res.json();
@@ -144,9 +145,15 @@ export const App = () => {
                     )} />
                     <Route path='/process/:id' element={(
                         <BlacklistContext.Provider value={providerBalcklist} >
-                            <Scraper processes={processes} setProcesses={setProcesses} deleteProcess={deleteProcess} scrapeData={scrapeData} />
+                            <Scraper
+                                processes={processes}
+                                setProcesses={setProcesses}
+                                deleteProcess={deleteProcess}
+                                scrapeData={scrapeData}
+                            />
                         </BlacklistContext.Provider>
                     )} />
+                    <Route path='/login' element={<Login />}/>
                     <Route path='*' element={<div>404 error</div>} />
                 </Routes>
                 <Footer />
