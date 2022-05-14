@@ -10,10 +10,10 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeData }) => {
     const { id } = useParams();
 
     // Get Process
-    const process = useMemo(() => processes.find(process => process.id === id), [processes, id])
+    const process = useMemo(() => processes.find(process => process.id === id), [processes, id]);
 
     // Get Scraper Status
-    const scraperStatus = useMemo(() => processes.find(process => process.status === 'RUNNING'), [processes])
+    const scraperStatus = useMemo(() => processes.find(process => process.status === 'RUNNING'), [processes]);
 
     // Delete Process
     const onDelete = (id) => {
@@ -38,27 +38,26 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeData }) => {
         
         // start scraping
         scrapeData(id);
-        alert('Process started...');
     }
 
     return (
         <>
-            {process && <main className='scraper'>
-                <div className='scraper-icons'>
-                    <div className='icon-section' onClick={() => navigate('/')}>
-                        <FiArrowLeft className='icon' />
-                    </div>
-                    <div className='icon-section' onClick={() => onDelete(id)}>
-                        <div className='text-icon'>delete</div>
-                        <FiX className='icon' />
-                    </div>
+        {process && <main className='scraper'>
+            <div className='scraper-icons'>
+                <div className='icon-section' onClick={() => navigate('/')}>
+                    <FiArrowLeft className='icon' />
                 </div>
-                <Controller process={process} scraperStatus={scraperStatus} onToggle={onToggle} />
-                <section className='bottom-section'>
-                    <textarea className='console-container' value={process.results.join('\n')} readOnly />
-                    <Blacklist />
-                </section>
-            </main>}
+                <div className='icon-section' onClick={() => onDelete(id)}>
+                    <div className='text-icon'>delete</div>
+                    <FiX className='icon' />
+                </div>
+            </div>
+            <Controller process={process} onToggle={onToggle} />
+            <section className='bottom-section'>
+                <textarea className='console-container' value={process.results.join('\n')} readOnly />
+                <Blacklist />
+            </section>
+        </main>}
         </>
     );
 }

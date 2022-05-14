@@ -31,9 +31,19 @@
     height: 6px;
     border-radius: 3px;
     background-color: var(--color-1);
-    transition: all 20s ease-out;
 }
 
 .status-bar--on {
-    width: 1050px;
+    width: 1090px;
+}
+
+.status-bar--done {
+    width: 1100px;
+}
+
+.proc-status {
+    display: block;
+    height: 14px;
+    font-size: 14px;
+    line-height: 1;
 }

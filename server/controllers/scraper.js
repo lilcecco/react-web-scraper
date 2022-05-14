@@ -25,17 +25,22 @@ exports.getScrapedData = (req, res) => {
         }
 
         const process = results[0];
-        const urls = JSON.parse(process.urls);
+        const urls = new Set(JSON.parse(process.urls));
         const data = JSON.parse(process.results) ?? [];
         let status = process.status;
 
         // scrape data
         const scrapeData = async () => {
+            let firstIteration = true;
 
             for (let url of urls) {
+
                 // change status
-                if (urls.indexOf(url) === 0) {
+                if (firstIteration) {
+
                     status = 'RUNNING';
+                    firstIteration = false;
+
                     db.query(`UPDATE processes SET status = ? WHERE id = ?`, [status, id], (err, results) => {
                         if (err) throw err; // da cambiare
                     });
@@ -52,7 +57,7 @@ exports.getScrapedData = (req, res) => {
                 if (!rawData) continue;
 
                 // scrape email
-                const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,4}/.exec(rawData)?.[0];
+                const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,3}/.exec(rawData)?.[0];
                 if (email) data.push(email);
 
                 /*
