@@ -1,9 +1,14 @@
-.proc-container {
+.processes-history-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.processes-history {
     position: relative;
     width: 600px;
 }
 
-.proc-header {
+.processes-history-header {
     display: flex;
     justify-content: space-between;
     align-items: center;

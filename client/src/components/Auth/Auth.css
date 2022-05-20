@@ -1,0 +1,47 @@
+.auth-container {
+    display: flex;
+}
+
+.auth-bg, 
+.auth-form-container {
+    width: 50%;
+}
+
+.auth-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-form {
+    width: 460px;
+}
+
+.auth-form h1 {
+    color: var(--color-2);
+}
+
+.auth-form .sub {
+    margin-bottom: 30px;
+    color: var(--color-3);
+}
+
+.auth-form .button {
+    margin-top: 20px;
+}
+
+.auth-form .forgot-passwd {
+    text-align: right;
+    font-size: 14px;
+    color: var(--color-3);
+    cursor: pointer;
+}
+
+.switch-auth-link {
+    margin-top: 60px;
+}
+
+.switch-auth-link span {
+    color: var(--color-1);
+    cursor: pointer ;
+}

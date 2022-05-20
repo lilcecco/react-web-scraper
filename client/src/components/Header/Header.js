@@ -5,14 +5,16 @@ import SwitchMode from './SwitchMode';
 import './Header.css';
 
 const Header = ({ darkMode, setDarkMode }) => {
+
   return (
     <header className='header'>
         <Logo />
         <nav className='nav'>
             <ul>
                 <Link to='/'><li>Home</li></Link>
-                <Link to='/about'><li>About</li></Link>
-                <Link to='/login'><li><FiUser style={userIconStyle} /></li></Link>
+                <Link to='/pricing'><li>Pricing</li></Link>
+                <li className='sub'>FREE TRIAL</li>
+                <Link to='/auth'><li><FiUser style={userIconStyle} /></li></Link>
                 <li><SwitchMode darkMode={darkMode} setDarkMode={setDarkMode} /></li>
             </ul>
         </nav>

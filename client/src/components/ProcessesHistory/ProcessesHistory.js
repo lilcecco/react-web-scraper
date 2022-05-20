@@ -1,7 +1,8 @@
 import { useState, useContext } from 'react';
-import { ProcessesContext } from '../../App';
+import { ProcessesContext } from '../App';
 import Processes from './Processes';
 import AddProcess from './AddProcess';
+import Suggestions from './Suggestions';
 import './ProcessesHistory.css';
 
 const ProcessesHistory = () => {
@@ -18,8 +19,9 @@ const ProcessesHistory = () => {
     }
 
     return (
-        <div className='proc-container'>
-            <div className='proc-header'>
+        <main className='processes-history-container'>
+            <div className='processes-history'>
+            <div className='processes-history-header'>
                 <h1>PROCESSES HISTORY</h1>
                 <div className='button btn-style-2' onClick={() => setShowAddProcess(!showAddProcess)}>
                     {showAddProcess ? 'CLOSE' : 'NEW'}
@@ -27,6 +29,9 @@ const ProcessesHistory = () => {
             </div>
             {showAddProcess ? <AddProcess onAdd={onAdd} /> : <Processes processes={processes} />}
         </div>
+        <Suggestions />
+    </main>
+
     );
 }
 

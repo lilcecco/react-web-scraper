@@ -1,10 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from '../Header';
-import Home from '../Home';
+import ProcessesHistory from '../ProcessesHistory';
 import Scraper from '../Scraper';
 import Footer from '../Footer';
-import Login from '../Login';
+import Auth from '../Auth';
+import Home from '../Home';
+import Pricing from '../Pricing';
+import Error from '../Error';
 import './App.css';
 
 export const ProcessesContext = React.createContext();
@@ -15,7 +18,6 @@ export const App = () => {
     const [processes, setProcesses] = useState([]);
     const [blacklist, setBlacklist] = useState([]);
 
-    // Get Balcklist
     useEffect(() => {
         const getProcesses = async () => {
             const res = await fetch('/api/data/processes');
@@ -138,9 +140,11 @@ export const App = () => {
             <div className='container' style={darkMode ? { backgroundColor: '#171C2B' } : {}}>
                 <Header darkMode={darkMode} setDarkMode={setDarkMode} />
                 <Routes >
-                    <Route path='/' element={(
+                    <Route path='/' element={<Home />} />
+                    <Route path='pricing' element={<Pricing />} />
+                    <Route path='/processes-history' element={(
                         <ProcessesContext.Provider value={providerProcesses}>
-                            <Home />
+                            <ProcessesHistory />
                         </ProcessesContext.Provider>
                     )} />
                     <Route path='/process/:id' element={(
@@ -153,8 +157,8 @@ export const App = () => {
                             />
                         </BlacklistContext.Provider>
                     )} />
-                    <Route path='/login' element={<Login />}/>
-                    <Route path='*' element={<div>404 error</div>} />
+                    <Route path='/auth' element={<Auth />}/>
+                    <Route path='*' element={<Error />} />
                 </Routes>
                 <Footer />
             </div>
