@@ -1,34 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-const LoginForm = ({ onToggle, setToken }) => {
+const LoginForm = ({ onToggle, onLogin }) => {
     const navigate = useNavigate();
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const onSubmit = async (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
-        
-        const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
 
+        onLogin({ email, password });
+        
         // reset default
         setEmail('');
         setPassword('');
-
-        if (data?.error) {
-            alert(data.error);
-            return;
-        }
-
-        setToken(data);
 
         navigate('/');
     }
@@ -38,14 +24,14 @@ const LoginForm = ({ onToggle, setToken }) => {
             <h1>LOGIN</h1>
             <div className='sub'>Welcome back! Please login your account.</div>
             <div className='textbox'>
-                <label htmlFor='email'>EMAIL</label>
+                <label htmlFor='email'>Email</label>
                 <input
                     type='text' id='email' name='email' placeholder='Insert email'
                     value={email} onChange={(e) => setEmail(e.target.value)}
                 />
             </div>
             <div className='textbox'>
-                <label htmlFor='password'>PASSWORD</label>
+                <label htmlFor='password'>Password</label>
                 <input
                     type='password' id='password' name='password' placeholder='Insert password'
                     value={password} onChange={(e) => setPassword(e.target.value)}

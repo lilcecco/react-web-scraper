@@ -17,6 +17,7 @@ export const App = () => {
     const [darkMode, setDarkMode] = useState(false);
     const [processes, setProcesses] = useState([]);
     const [blacklist, setBlacklist] = useState([]);
+    const [isLogged, setIsLogged] = useState(false);
 
     useEffect(() => {
         const getProcesses = async () => {
@@ -31,8 +32,17 @@ export const App = () => {
             setBlacklist(data);
         }
 
+        // Check if the user is logged
+        const isLogged = async () => {
+            const res = await fetch('/api/auth/logged');
+            const data = await res.json();
+            if (data?.error) return;
+            setIsLogged(true);
+        }
+
         getProcesses();
         getBlacklist();
+        isLogged();
     }, []);
 
     // Add New Process
@@ -46,10 +56,7 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) {
-            alert(data.error);
-            return;
-        }
+        if (data?.error) return alert(data.error);
 
         setProcesses([process, ...processes]);
     }
@@ -65,10 +72,7 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) {
-            alert(data.error);
-            return;
-        }
+        if (data?.error) return alert(data.error);
 
         // update processes
         setProcesses(processes.filter(process => process.id !== id));
@@ -85,10 +89,7 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) {
-            alert(data.error);
-            return;
-        }
+        if (data?.error) return alert(data.error);
 
         setBlacklist([blacklistElem, ...blacklist]);
     }
@@ -104,10 +105,7 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) {
-            alert(data.error);
-            return;
-        }
+        if (data?.error) return alert(data.error);
 
         setBlacklist(blacklist.filter(blacklistElem => blacklistElem.id !== id));
     }
@@ -123,13 +121,50 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) {
-            alert(data.error);
-            return;
-        }
+        if (data?.error) return alert(data.error);
 
         // update processes
         setProcesses(processes.map(process => process.id === id ? data : process));
+    }
+
+    // Login (must be updated)
+    const onLogin = async (user) => {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        });
+        const data = await res.json();
+
+        if (data?.error) return alert(data.error);
+
+        setIsLogged(true);
+    }
+
+    // Register (must be updated)
+    const onRegister = async (user) => {
+        const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        });
+        const data = await res.json();
+
+        if (data?.error) return alert(data.error);
+    }
+
+    // Logout (must be updated)
+    const logout = async () => {
+        const res = await fetch('/api/auth/logout');
+        const data = await res.json();
+
+        if (data?.error) return alert(data.error);
+
+        setIsLogged(false);
     }
 
     const providerProcesses = useMemo(() => { return { processes, addProcess } }, [processes]);
@@ -138,15 +173,19 @@ export const App = () => {
     return (
         <Router>
             <div className='container' style={darkMode ? { backgroundColor: '#171C2B' } : {}}>
-                <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+                <Header
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                    isLogged={isLogged}
+                    logout={logout} />
                 <Routes >
                     <Route path='/' element={<Home />} />
                     <Route path='pricing' element={<Pricing />} />
-                    <Route path='/processes-history' element={(
+                    {isLogged && <Route path='/processes-history' element={(
                         <ProcessesContext.Provider value={providerProcesses}>
                             <ProcessesHistory />
                         </ProcessesContext.Provider>
-                    )} />
+                    )} />}
                     <Route path='/process/:id' element={(
                         <BlacklistContext.Provider value={providerBalcklist} >
                             <Scraper
@@ -157,7 +196,7 @@ export const App = () => {
                             />
                         </BlacklistContext.Provider>
                     )} />
-                    <Route path='/auth' element={<Auth />}/>
+                    <Route path='/auth' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />
                     <Route path='*' element={<Error />} />
                 </Routes>
                 <Footer />

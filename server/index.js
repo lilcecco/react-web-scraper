@@ -1,4 +1,5 @@
 const express = require('express');
+const cookeiParser = require('cookie-parser');
 const path = require('path');
 const dotenv = require('dotenv');
 const mysql = require('mysql');
@@ -19,6 +20,8 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+app.use(cookeiParser());
 
 db.connect((err) => {
     if (err) throw err; // da cambiare

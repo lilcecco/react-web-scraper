@@ -18,7 +18,7 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeData }) => {
     // Delete Process
     const onDelete = (id) => {
         deleteProcess(id);
-        navigate('/');
+        navigate('/processes-history');
     }
 
     // Start Process
@@ -44,7 +44,7 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeData }) => {
         <>
         {process && <main className='scraper'>
             <div className='scraper-icons'>
-                <div className='icon-section' onClick={() => navigate('/')}>
+                <div className='icon-section' onClick={() => navigate('/processes-history')}>
                     <FiArrowLeft className='icon' />
                 </div>
                 <div className='icon-section' onClick={() => onDelete(id)}>

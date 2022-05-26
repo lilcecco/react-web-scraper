@@ -3,7 +3,7 @@ import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import './Auth.css';
 
-const Auth = ({ setToken}) => {
+const Auth = ({ onLogin, onRegister }) => {
     const [registerOpen, setRegisterOpen] = useState(false);
 
     const onToggle = () => {
@@ -17,9 +17,9 @@ const Auth = ({ setToken}) => {
             </div>
             <div className='auth-form-container'>
                 {registerOpen ? (
-                    <RegisterForm onToggle={onToggle} />
+                    <RegisterForm onToggle={onToggle} onRegister={onRegister} />
                 ) : (
-                    <LoginForm onToggle={onToggle} setToken={setToken} />
+                    <LoginForm onToggle={onToggle} onLogin={onLogin} />
                 )}
             </div>
         </main>

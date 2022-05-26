@@ -13,16 +13,13 @@ exports.register = async (req, res) => {
     const { id, email, password, confirmPassword } = req.body;
 
     // check confirm password
-    if (password !== confirmPassword) {
-        res.json({ error: 'Passwords don\'t correspond' });
-        return;
-    }
-        
+    if (password !== confirmPassword) return res.json({ error: 'Passwords don\'t correspond' });
+
     // hash password
     const hashedPassword = await bcrypt.hash(password, 8);
 
     // insert new user
-    db.query('INSERT INTO users SET ?', {id, email, password: hashedPassword }, (err, results) => {
+    db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword }, (err, results) => {
         if (err) {
             switch (err.errno) {
                 case 1062:
@@ -38,50 +35,21 @@ exports.register = async (req, res) => {
     });
 }
 
-let refreshTokens = [];
-
-exports.token = (req, res) => {
-    const refreshToken = req.body.token; 
-
-    if (refreshToken == null) return res.json({ error: 'Unathorized' });
-    if (!refreshTokens.includes(refreshToken)) return  res.json({ error: 'Forbidden' });
-
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.json({ error: 'Forbidden' });
-        const accessToken = generateAccessToken(user);
-        res.json({ accessToken });
-    });
-}
-
-exports.logout = (req, res) => {
-    refreshTokens = refreshTokens.filter(token => token !== req.body.token);
-    res.json({ message: '' });
-}
-
 exports.login = (req, res) => {
     const { email, password } = req.body;
 
     db.query('SELECT * FROM users WHERE email = ?', [email], async (err, results) => {
-        if (err) {
-            res.json({ error: 'Login attempt throw error, try again' });
-            return;
-        }
+        if (err) return res.json({ error: 'Login attempt throw error, try again' });
 
         // check email
-        if (results.length < 1) {
-            res.json({ error: 'Invalid email or password' });
-            return;
-        }
+        if (results.length < 1) return res.json({ error: 'Invalid email or password' });
 
         // check user
-        if(await bcrypt.compare(password, results[0].password)) {
+        if (await bcrypt.compare(password, results[0].password)) {
             const user = { id: results[0].id, email }
 
-            const accessToken = generateAccessToken(user);
-            const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-            refreshTokens.push(refreshToken);
-            res.json({ accessToken, refreshToken });
-            return;
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+            return res.cookie('accessToken', accessToken, { httpOnly: true, sameSite: 'Strict' }).json({ message: '' });
         }
 
         // default returned value
@@ -89,14 +57,16 @@ exports.login = (req, res) => {
     });
 }
 
-const generateAccessToken = (user) => {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' });
-}
+exports.logged = (req, res) => {
+    const { id } = req.user;
 
-exports.posts = (req, res) => {
-    db.query('SELECT * FORM users WHERE id = ?', [req.user.id], (err, results) => {
-        if (err) res.json({ error: 'Error' });
+    db.query('SELECT id, email FROM users WHERE id = ?', [id], (err, results) => {
+        if (err) return res.json({ error: 'No user found' });
 
         res.json(results[0]);
     });
+}
+
+exports.logout = (req, res) => {
+    res.clearCookie('accessToken').json({ message: '' });
 }

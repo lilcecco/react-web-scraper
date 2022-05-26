@@ -27,28 +27,66 @@
     background-color: var(--color-1);
 }
 
-nav ul {
+.nav ul {
     display: flex;
     align-items: center;
     height: 100%;
 }
 
-nav li {
+.nav li {
+    position: relative;
     display: flex;
     align-items: center;
     margin-left: 60px;
     font-size: 24px;
     color: var(--color-1);
+    cursor: pointer;
 }
 
-nav .sub {
+.nav .sub {
     display: flex;
     justify-content: center;
     width: 90px;
-    height: 25px;
+    height: 26px;
     border-radius: 3px;
     border: 2px solid var(--color-1);
     font-size: 14px;
+}
+
+.nav li ul {
+    position: absolute;
+    top: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    height: auto;
+    width: 100px;
+    border-radius: 5px;
+    background-color: var(--color-4);
+    box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.15);
+    z-index: 99;
+}
+
+.nav li:hover ul {
+    display: block;
+}
+
+.nav li ul li {
+    display: block;
+    height: 30px;
+    text-align: center;
+    margin-left: 0;
+    font-size: 14px;
+    color: var(--color-2);
+    border-bottom: 1px solid var(--color-3);
+}
+
+.nav li ul .triangle {
+    position: absolute;
+    top: -9px; left: 50%;
+    transform: translateX(-50%);
+    border-bottom: 10px solid var(--color-4);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
 }
 
 .switch-container {
