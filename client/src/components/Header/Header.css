@@ -43,12 +43,12 @@
     cursor: pointer;
 }
 
-.nav .sub {
+.nav .evi {
     display: flex;
     justify-content: center;
     width: 90px;
     height: 26px;
-    border-radius: 3px;
+    border-radius: 2px;
     border: 2px solid var(--color-1);
     font-size: 14px;
 }

@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import './Auth.css';
 
 const Auth = ({ onLogin, onRegister }) => {
-    const [registerOpen, setRegisterOpen] = useState(false);
+    const { page } = useParams();
+    const navigate = useNavigate();
 
     const onToggle = () => {
-        setRegisterOpen(!registerOpen);
+        page === 'login' ? navigate('/auth/register') : navigate('/auth/login')
     }
 
     return (
@@ -16,10 +17,10 @@ const Auth = ({ onLogin, onRegister }) => {
                 <img className='img-res' src='/img/blue-waves.jpg' alt=''></img>
             </div>
             <div className='auth-form-container'>
-                {registerOpen ? (
-                    <RegisterForm onToggle={onToggle} onRegister={onRegister} />
-                ) : (
+                {page === 'login' ? (
                     <LoginForm onToggle={onToggle} onLogin={onLogin} />
+                ) : (
+                    <RegisterForm onToggle={onToggle} onRegister={onRegister} />
                 )}
             </div>
         </main>

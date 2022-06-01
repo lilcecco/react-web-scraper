@@ -7,16 +7,16 @@ const LoginForm = ({ onToggle, onLogin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
-        onLogin({ email, password });
-        
+        const data = await onLogin({ email, password });
+
         // reset default
         setEmail('');
         setPassword('');
 
-        navigate('/');
+        if (data) navigate('/processes-history');
     }
 
     return (

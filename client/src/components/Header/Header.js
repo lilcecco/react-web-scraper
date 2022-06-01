@@ -10,7 +10,7 @@ const Header = ({ darkMode, setDarkMode, isLogged, logout }) => {
 
   const onLogout = () => {
     logout();
-    navigate('/');
+    navigate('/auth/login');
   }
 
   return (
@@ -20,9 +20,9 @@ const Header = ({ darkMode, setDarkMode, isLogged, logout }) => {
         <ul>
           <Link to='/'><li>Home</li></Link>
           {isLogged && <Link to='/processes-history'><li>Scraper</li></Link>}
-            <Link to='/pricing'>{isLogged ? <li className='sub'>FREE TRIAL</li> : <li>Pricing</li>}</Link>
+            <Link to='/pricing'>{isLogged ? <li className='evi'>FREE TRIAL</li> : <li>Pricing</li>}</Link>
           <li>
-            <FiUser style={userIconStyle} onClick={!isLogged ? () => navigate('/auth') : null} />
+            <FiUser style={userIconStyle} onClick={!isLogged ? () => navigate('/auth/login') : null} />
             {isLogged && <DropDownMenu onLogout={onLogout} />}
           </li>
           <li><SwitchMode darkMode={darkMode} setDarkMode={setDarkMode} /></li>

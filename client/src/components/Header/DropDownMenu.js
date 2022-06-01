@@ -1,7 +1,9 @@
+import { Link } from 'react-router-dom';
+
 const DropDownMenu = ({ onLogout }) => {
   return (
     <ul>
-        <li>Account</li>
+        <Link to='/private-area'><li>Account</li></Link>
         <li style={borderNone} onClick={onLogout}>Logout</li>
 
         <div className='triangle'></div>

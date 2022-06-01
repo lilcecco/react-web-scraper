@@ -46,7 +46,7 @@ exports.login = (req, res) => {
 
         // check user
         if (await bcrypt.compare(password, results[0].password)) {
-            const user = { id: results[0].id, email }
+            const user = { id: results[0].id, passwordLength: password.length }
 
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
             return res.cookie('accessToken', accessToken, { httpOnly: true, sameSite: 'Strict' }).json({ message: '' });
@@ -58,12 +58,13 @@ exports.login = (req, res) => {
 }
 
 exports.logged = (req, res) => {
-    const { id } = req.user;
+    const { id, passwordLength } = req.user;
 
-    db.query('SELECT id, email FROM users WHERE id = ?', [id], (err, results) => {
-        if (err) return res.json({ error: 'No user found' });
+    db.query('SELECT email FROM users WHERE id = ?', [id], (err, results) => {
+        if (err) return res.json({ error: 'No users found' });
 
-        res.json(results[0]);
+        const result = results[0];
+        res.json({ email: result.email, passwordLength });
     });
 }
 

@@ -23,6 +23,7 @@ main {
 h1 {font-size: 48px; font-weight: 400; line-height: 1; color: var(--color-1);}
 h2 {font-size: 40px; font-weight: 400; line-height: 1; color: var(--color-1);}
 h3 {font-size: 32px; font-weight: 400; line-height: 1; color: var(--color-1);}
+h4 {font-size: 24px; font-weight: 400; line-height: 1;}
 
 a {text-decoration: none; color: inherit;}
 ul, ol, li {list-style-type: none;}
@@ -48,6 +49,12 @@ ul, ol, li {list-style-type: none;}
     background-color: none;
     border: 2px solid var(--color-1);
     color: var(--color-1);
+}
+
+.btn-style-3 {
+    color: var(--color-1);
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 form .button {

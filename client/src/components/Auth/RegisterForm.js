@@ -6,17 +6,17 @@ const RegisterForm = ({ onToggle, onRegister }) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
-        onRegister({ id: uuidv4(), email, password, confirmPassword });
+        const data = await onRegister({ id: uuidv4(), email, password, confirmPassword });
 
         // reset default
         setEmail('');
         setPassword('');
         setConfirmPassword('');
 
-        onToggle();
+        if (data) onToggle();
     }
 
     return (

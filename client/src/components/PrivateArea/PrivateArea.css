@@ -1,0 +1,65 @@
+.private-area-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.private-area-menu {
+    width: 400px;
+}
+
+.private-area-menu h1 {
+    margin-bottom: 52px;
+}
+
+.private-area-menu li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.private-area-menu li span {
+    margin-left: 10px;
+}
+
+.private-area-data {
+    width: 900px;
+}
+
+.private-area-data h2 {
+    margin-top: 100px;
+}
+
+.private-area-data .subtitle {
+    margin: 80px 0 40px 0;
+}
+
+.private-area-data span {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    border-bottom: 1px solid var(--color-2);
+}
+
+.private-area-data .textbox {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+}
+
+.private-area-data .textbox .text {
+    color: var(--color-3);
+    font-size: 18px;
+}
+.private-area-data .textbox span {
+    width: 300px;
+    margin-top: 3px;
+    border-bottom: 1px solid var(--color-3);
+}
+
+.private-area-data .cta {
+    position: absolute;
+    bottom: 0; right: 0;
+    line-height: 1;
+}

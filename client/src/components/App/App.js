@@ -8,6 +8,7 @@ import Auth from '../Auth';
 import Home from '../Home';
 import Pricing from '../Pricing';
 import Error from '../Error';
+import PrivateArea from '../PrivateArea';
 import './App.css';
 
 export const ProcessesContext = React.createContext();
@@ -141,6 +142,7 @@ export const App = () => {
         if (data?.error) return alert(data.error);
 
         setIsLogged(true);
+        return data;
     }
 
     // Register (must be updated)
@@ -155,6 +157,8 @@ export const App = () => {
         const data = await res.json();
 
         if (data?.error) return alert(data.error);
+
+        return data;
     }
 
     // Logout (must be updated)
@@ -180,7 +184,7 @@ export const App = () => {
                     logout={logout} />
                 <Routes >
                     <Route path='/' element={<Home />} />
-                    <Route path='pricing' element={<Pricing />} />
+                    <Route path='pricing' element={<Pricing isLogged={isLogged} />} />
                     {isLogged && <Route path='/processes-history' element={(
                         <ProcessesContext.Provider value={providerProcesses}>
                             <ProcessesHistory />
@@ -196,7 +200,8 @@ export const App = () => {
                             />
                         </BlacklistContext.Provider>
                     )} />
-                    <Route path='/auth' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />
+                    <Route path='/auth/:page' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />
+                    {isLogged && <Route path='/private-area' element={<PrivateArea logout={logout} />} />}
                     <Route path='*' element={<Error />} />
                 </Routes>
                 <Footer />
