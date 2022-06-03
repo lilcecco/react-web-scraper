@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 const PlaneDetails = () => {
     return (
         <>
@@ -12,7 +10,7 @@ const PlaneDetails = () => {
                 <div>Level</div>
                 <div className='text'>FREE TRIAL</div>
                 <span></span>
-                <Link to='/pricing'><div className='cta btn-style-3'>Update Plane</div></Link>
+                <div className='cta btn-style-3'>Delete Subscription</div>
             </div>
             <div className='subtitle'>
                 <h4>Pyament Informations</h4>
@@ -21,7 +19,6 @@ const PlaneDetails = () => {
             <div className='textbox'>
                 <div className='text'>No pyament informations</div>
             </div>
-            <div className='btn-style-3'>Delete Subscription</div>
         </>
     );
 }
