@@ -6,7 +6,7 @@ import Scraper from '../Scraper';
 import Footer from '../Footer';
 import Auth from '../Auth';
 import Home from '../Home';
-import Pricing from '../Pricing';
+import Subscription from '../Subscription';
 import Error from '../Error';
 import PrivateArea from '../PrivateArea';
 import './App.css';
@@ -184,7 +184,7 @@ export const App = () => {
                     logout={logout} />
                 <Routes >
                     <Route path='/' element={<Home />} />
-                    <Route path='pricing' element={<Pricing isLogged={isLogged} />} />
+                    <Route path='/subsription' element={<Subscription />} />
                     {isLogged && <Route path='/processes-history' element={(
                         <ProcessesContext.Provider value={providerProcesses}>
                             <ProcessesHistory />
