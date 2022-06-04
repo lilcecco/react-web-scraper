@@ -1,30 +1,37 @@
-import PlaneBox from './PlaneBox';
+import Product from './Product';
 import './Pricing.css';
 
 const Pricing = () => {
+  const products = [
+    {
+      name: 'Basic',
+      price: 5,
+      description: ['10 processes per day'],
+      lookup_key: 'basic_sub',
+    },
+    {
+      name: 'Premium',
+      price: 11,
+      description: ['Unlimited processes', '1000 email per month'],
+    },
+    {
+      name: 'Ultimate',
+      price: 5,
+      description: ['Unlimited processes', 'Unlimited email'],
+    },
+  ]
+
   return (
-    <main className='pricing-container'>
+    <div className='pricing-container'>
       <div className='pricing-title'>
         <h1>PRICING</h1>
         <div>Welcome into pricing section! Choose the best plane for your business.</div>
       </div>
-      <div className='plane-boxes-container'>
-        <PlaneBox
-          options={{ title: 'Basic', price: '5', description: { scraper: '10 processes per day' } }}
-        />
-        <PlaneBox boxStyle={centralBoxStyle}
-          options={{ id: 'price_1L6WRFJYxt4nzzwuFbjS7EgA', title: 'Premium', price: '11', description: { scraper: 'Unlimited processes', email: '1000 email per month' } }}
-        />
-        <PlaneBox
-          options={{ title: 'Ultimate', price: '14', description: { scraper: 'Unlimited processes', email: 'Unlimited email' } }}
-        />
+      <div className='products-container'>
+        {products.map(product => <Product key={product.name} product={product} />)}
       </div>
-    </main>
+    </div>
   );
-}
-
-const centralBoxStyle = {
-  transform: 'scale(1.1)',
 }
 
 export default Pricing;
