@@ -1,5 +1,5 @@
 const express = require('express');
-const { createCheckoutSession, createPortalSession } = require('../controllers/checkout'); 
+const { createCheckoutSession, createPortalSession } = require('../controllers/checkout');
 
 const router = express.Router();
 

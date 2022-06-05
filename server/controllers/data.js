@@ -1,3 +1,4 @@
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 const mysql = require('mysql');
 
 const db = mysql.createConnection({
@@ -24,6 +25,17 @@ exports.getBlacklist = (req, res) => {
     });
 }
 
+exports.getUser = (req, res) => {
+    const { id } = req.user;
+
+    db.query('SELECT * FROM users WHERE id = ?', [id], (err, results) => {
+        if (err) throw err; // da cambiare
+
+        
+        res.json(results[0]);
+    });
+}
+
 exports.setProcess = (req, res) => {
     const process = req.body;
     const parsedProcess = { ...process, urls: JSON.stringify(process.urls), results: JSON.stringify(process.results) };
@@ -33,6 +45,19 @@ exports.setProcess = (req, res) => {
             res.json({ error: 'Adding new process throw error, try again' });
             return;
         }
+
+        res.json({ message: '' });
+    });
+}
+
+exports.updateUser = async (req, res) => {
+    const { sessionId } = req.body;
+    const { id } = req.user;
+
+    const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId);
+
+    db.query('UPDATE users SET customer_id = ? WHERE id = ?', [checkoutSession.customer, id], (err, results) => {
+        if (err) throw err; // da cambiare
 
         res.json({ message: '' });
     });

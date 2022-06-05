@@ -4,19 +4,19 @@ import './Pricing.css';
 const Pricing = () => {
   const products = [
     {
-      id: 'price_1L6bUeJYxt4nzzwuRuY20Tgu',
+      price_id: 'price_1L6bUeJYxt4nzzwuRuY20Tgu',
       name: 'Basic',
       price: 5,
       description: ['10 processes per day'],
     },
     {
-      id: 'price_1L6WRFJYxt4nzzwuFbjS7EgA',
+      price_id: 'price_1L6WRFJYxt4nzzwuFbjS7EgA',
       name: 'Premium',
       price: 11,
       description: ['Unlimited processes', '1000 email per month'],
     },
     {
-      id: 'price_1L70YxJYxt4nzzwufRfjr51m',
+      price_id: 'price_1L70YxJYxt4nzzwufRfjr51m',
       name: 'Ultimate',
       price: 5,
       description: ['Unlimited processes', 'Unlimited email'],

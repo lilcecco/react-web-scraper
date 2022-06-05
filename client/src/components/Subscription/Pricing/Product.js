@@ -6,9 +6,11 @@ const Product = ({ product }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id: product.id }),
+      body: JSON.stringify({ price_id: product.price_id }),
     });
     const data = await res.json();
+
+    if (data?.error) return; // update error handler
 
     window.location = data.url;
   }

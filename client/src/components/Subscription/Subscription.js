@@ -4,21 +4,50 @@ import ManageBilling from './ManageBilling';
 import './Subscription.css';
 
 const Subscription = ({ isLogged }) => {
-  const [sessionId, setSessionId] = useState('');
+  const [customerId, setCustomerId] = useState('');
+  // const [message, setMessage] = useState('');
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
 
-    if (query.get('success')) {
-      setSessionId(query.get('session_id'));
+    if (query.get('cancel')) {
+      alert('cancelled');
+      return;
     }
 
-  }, [sessionId]);
+    if (query.get('success')) {
+      const updateCustomerId = async () => {
+        const res = await fetch('/api/data/user', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ sessionId: query.get('session_id') }),
+        });
+        const data = await res.json();
+
+        if (data?.error) return;
+      }
+
+      updateCustomerId();
+    }
+
+    const getCustomerId = async () => {
+      const res = await fetch('/api/data/user');
+      const data = await res.json();
+
+      if (data?.error) return; // update error handler
+
+      setCustomerId(data.customer_id);
+    }
+
+    getCustomerId();
+  }, []);
 
   return (
     <main>
-      {sessionId ? (
-        <ManageBilling sessionId={sessionId} />
+      {customerId ? (
+        <ManageBilling customerId={customerId} />
       ) : (
         <Pricing />
       )}

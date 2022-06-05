@@ -1,4 +1,4 @@
-const ManageBilling = ({ sessionId }) => {
+const ManageBilling = ({ customerId }) => {
 
     const onSubmit = async () => {
         const res = await fetch('/api/checkout/create-portal-session', {
@@ -6,7 +6,7 @@ const ManageBilling = ({ sessionId }) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ sessionId }),
+            body: JSON.stringify({ customerId }),
         });
         const data = await res.json();
 
