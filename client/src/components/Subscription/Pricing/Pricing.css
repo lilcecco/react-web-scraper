@@ -7,53 +7,53 @@
     margin-bottom: 10px;
 }
 
-.plane-boxes-container {
+.products-container {
     display: flex;
     justify-content: center;
 }
 
-.plane-box {
+.product {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 300px;
     height: 400px;
-    margin: 0 35px;
-    padding: 40px 45px;
+    margin: 0 30px;
+    padding: 40px 60px;
     border-radius: 4px;
     background-color: var(--color-4);
     box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.15);
 }
 
-.plane-box h2 {
+.product h2 {
     color: var(--color-2);
 }
 
-.plane-price-container {
+.product-price-container {
     color: var(--color-1);
-    margin-bottom: 20px;
+    margin: 5px 0 15px 0;
 }
 
-.plane-price {
+.product-price {
     font-size: 40px;
 }
 
-.plane-box ul {
+.product ul {
     width: 100%;
 }
 
-.plane-box li {
+.product li {
     list-style-type: disc;
-    font-size: 14px;
+    font-size: 16px;
 }
 
-.plane-box .button {
+.product .button {
     position: absolute;
     bottom: 40px;
 }
 
-.plane-box .trial-alert {
+.product .trial-alert {
     position: absolute;
     bottom: 10px;
     font-size: 14px;

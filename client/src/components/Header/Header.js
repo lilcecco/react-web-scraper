@@ -20,7 +20,7 @@ const Header = ({ darkMode, setDarkMode, isLogged, logout }) => {
         <ul>
           <Link to='/'><li>Home</li></Link>
           {isLogged && <Link to='/processes-history'><li>Scraper</li></Link>}
-            <Link to='/pricing'>{isLogged ? <li className='evi'>FREE TRIAL</li> : <li>Pricing</li>}</Link>
+            <Link to='/subsription'>{isLogged ? <li className='evi'>FREE TRIAL</li> : <li>Pricing</li>}</Link>
           <li>
             <FiUser style={userIconStyle} onClick={!isLogged ? () => navigate('/auth/login') : null} />
             {isLogged && <DropDownMenu onLogout={onLogout} />}
