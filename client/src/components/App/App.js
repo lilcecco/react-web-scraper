@@ -19,6 +19,7 @@ export const App = () => {
     const [processes, setProcesses] = useState([]);
     const [blacklist, setBlacklist] = useState([]);
     const [isLogged, setIsLogged] = useState(false);
+    const [customer, setCustomer] = useState(null);
 
     useEffect(() => {
         const getProcesses = async () => {
@@ -34,16 +35,20 @@ export const App = () => {
         }
 
         // Check if the user is logged
-        const isLogged = async () => {
-            const res = await fetch('/api/auth/logged');
+        const getUser = async () => {
+            const res = await fetch('/api/auth/customer');
             const data = await res.json();
-            if (data?.error) return;
+
+            console.log(data);
+            if (data?.error) return; // update error handler
+
             setIsLogged(true);
+            setCustomer(data);
         }
 
         getProcesses();
         getBlacklist();
-        isLogged();
+        getUser();
     }, []);
 
     // Add New Process
@@ -128,7 +133,7 @@ export const App = () => {
         setProcesses(processes.map(process => process.id === id ? data : process));
     }
 
-    // Login (must be updated)
+    // Login
     const onLogin = async (user) => {
         const res = await fetch('/api/auth/login', {
             method: 'POST',
@@ -141,11 +146,10 @@ export const App = () => {
 
         if (data?.error) return alert(data.error);
 
-        setIsLogged(true);
         return data;
     }
 
-    // Register (must be updated)
+    // Register
     const onRegister = async (user) => {
         const res = await fetch('/api/auth/register', {
             method: 'POST',
@@ -184,7 +188,7 @@ export const App = () => {
                     logout={logout} />
                 <Routes >
                     <Route path='/' element={<Home />} />
-                    <Route path='/subsription' element={<Subscription isLogged={isLogged} />} />
+                    <Route path='/subsription' element={<Subscription customerId={customer?.id} />} />
                     {isLogged && <Route path='/processes-history' element={(
                         <ProcessesContext.Provider value={providerProcesses}>
                             <ProcessesHistory />
@@ -200,8 +204,8 @@ export const App = () => {
                             />
                         </BlacklistContext.Provider>
                     )} />
-                    <Route path='/auth/:page' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />
-                    {isLogged && <Route path='/private-area' element={<PrivateArea logout={logout} />} />}
+                    {!isLogged && <Route path='/auth/:page' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />}
+                    {isLogged && <Route path='/private-area' element={<PrivateArea logout={logout} isLogged={isLogged} />} />}
                     <Route path='*' element={<Error />} />
                 </Routes>
                 <Footer />

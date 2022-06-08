@@ -22,7 +22,7 @@ const Header = ({ darkMode, setDarkMode, isLogged, logout }) => {
           {isLogged && <Link to='/processes-history'><li>Scraper</li></Link>}
             <Link to='/subsription'>{isLogged ? <li className='evi'>FREE TRIAL</li> : <li>Pricing</li>}</Link>
           <li>
-            <FiUser style={userIconStyle} onClick={!isLogged ? () => navigate('/auth/login') : null} />
+            <FiUser className='user-icon' onClick={isLogged ? null : () => navigate('/auth/login') } />
             {isLogged && <DropDownMenu onLogout={onLogout} />}
           </li>
           <li><SwitchMode darkMode={darkMode} setDarkMode={setDarkMode} /></li>
@@ -30,12 +30,6 @@ const Header = ({ darkMode, setDarkMode, isLogged, logout }) => {
       </nav>
     </header>
   );
-}
-
-const userIconStyle = {
-  width: '30px',
-  height: '30px',
-  strokeWidth: '1.5'
 }
 
 export default Header;

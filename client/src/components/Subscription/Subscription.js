@@ -1,56 +1,41 @@
-import { useEffect, useState } from 'react';
 import Pricing from './Pricing';
 import ManageBilling from './ManageBilling';
 import './Subscription.css';
 
-const Subscription = ({ isLogged }) => {
-  const [customerId, setCustomerId] = useState('');
-  // const [message, setMessage] = useState('');
+const Subscription = ({ customerId }) => {
 
-  useEffect(() => {
-    const query = new URLSearchParams(window.location.search);
+  const createCheckoutSession = async (id) => {
+    const res = await fetch('/api/checkout/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id, customerId }),
+    });
+    const data = await res.json();
 
-    if (query.get('cancel')) {
-      alert('cancelled');
-      return;
-    }
+    if (data?.error) return; // update error handler
 
-    if (query.get('success')) {
-      const updateCustomerId = async () => {
-        const res = await fetch('/api/data/user', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ sessionId: query.get('session_id') }),
-        });
-        const data = await res.json();
+    window.location = data.url;
+  }
 
-        if (data?.error) return;
-      }
+  const createPortalSession = async () => {
+    const res = await fetch('/api/checkout/create-portal-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ customerId }),
+    });
+    const data = await res.json();
 
-      updateCustomerId();
-    }
-
-    const getCustomerId = async () => {
-      const res = await fetch('/api/data/user');
-      const data = await res.json();
-
-      if (data?.error) return; // update error handler
-
-      setCustomerId(data.customer_id);
-    }
-
-    getCustomerId();
-  }, []);
+    window.location = data.url;
+  }
 
   return (
     <main>
-      {customerId ? (
-        <ManageBilling customerId={customerId} />
-      ) : (
-        <Pricing />
-      )}
+      {/* <Pricing onSubmit={createCheckoutSession} /> */}
+      <ManageBilling onSubmit={createPortalSession} />
     </main>
   )
 

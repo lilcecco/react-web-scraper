@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ onToggle, onLogin }) => {
-    const navigate = useNavigate();
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,7 +14,7 @@ const LoginForm = ({ onToggle, onLogin }) => {
         setEmail('');
         setPassword('');
 
-        if (data) navigate('/processes-history');
+        if (data) window.location = '/processes-history';
     }
 
     return (

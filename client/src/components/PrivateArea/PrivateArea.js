@@ -1,26 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSettings, FiShoppingBag, FiLogOut } from "react-icons/fi";
 import AccountDetails from './AccountDetails';
 import PlaneDetails from './PlaneDetails';
 import './PrivateArea.css';
 
-const PrivateArea = ({ logout }) => {
+const PrivateArea = ({ logout, isLogged }) => {
   const navigate = useNavigate();
-
+  
   const [planeDetailsOpen, setPlaneDetailsOpen] = useState(false);
-  const [user, setUser] = useState();
-
-    useEffect(() => {
-        const getUser = async () => {
-            const res = await fetch('/api/auth/logged');
-            const user = await res.json();
-            if (user?.error) return;
-            setUser(user);
-        }
-
-        getUser();
-    }, []);
 
     const onLogout = () => {
       logout();
@@ -47,7 +35,7 @@ const PrivateArea = ({ logout }) => {
         </ul>
       </div>
       <div className='private-area-data'>
-      {user && (planeDetailsOpen ? <PlaneDetails /> : <AccountDetails user={user} />) /* Loading... */}
+      {isLogged && (planeDetailsOpen ? <PlaneDetails /> : <AccountDetails isLogged={isLogged} />) /* Loading... */}
       </div>
     </main>
   )

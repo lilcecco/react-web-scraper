@@ -89,6 +89,12 @@
     border-right: 10px solid transparent;
 }
 
+.header .user-icon {
+    width: 30px;
+    height: 30px;
+    stroke-width: 1.5;
+}
+
 .switch-container {
     position: relative;
     display: block;

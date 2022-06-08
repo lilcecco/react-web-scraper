@@ -1,3 +1,4 @@
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -18,9 +19,15 @@ exports.register = async (req, res) => {
     // hash password
     const hashedPassword = await bcrypt.hash(password, 8);
 
+    // create customer id
+    const customer = await stripe.customers.create({
+        email: email,
+    });
+
     // insert new user
-    db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword }, (err, results) => {
+    db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword, customer_id: customer.id }, (err, results) => {
         if (err) {
+            console.log(err);
             switch (err.errno) {
                 case 1062:
                     res.json({ error: 'Account with this email already exists' });
@@ -46,7 +53,7 @@ exports.login = (req, res) => {
 
         // check user
         if (await bcrypt.compare(password, results[0].password)) {
-            const user = { id: results[0].id, passwordLength: password.length }
+            const user = { id: results[0].id }
 
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
             return res.cookie('accessToken', accessToken, { httpOnly: true, sameSite: 'Strict' }).json({ message: '' });
@@ -57,14 +64,16 @@ exports.login = (req, res) => {
     });
 }
 
-exports.logged = (req, res) => {
-    const { id, passwordLength } = req.user;
+exports.getCustomer = (req, res) => {
+    const { id } = req.user;
 
-    db.query('SELECT email FROM users WHERE id = ?', [id], (err, results) => {
-        if (err) return res.json({ error: 'No users found' });
+    db.query('SELECT customer_id FROM users WHERE id = ?', [id], async (err, results) => {
+        if (err) throw err; // da cambiare
 
         const result = results[0];
-        res.json({ email: result.email, passwordLength });
+        const customer = await stripe.customers.retrieve(result.customer_id);
+
+        res.json(customer);
     });
 }
 

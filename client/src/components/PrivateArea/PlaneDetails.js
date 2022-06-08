@@ -10,7 +10,7 @@ const PlaneDetails = () => {
                 <div>Level</div>
                 <div className='text'>FREE TRIAL</div>
                 <span></span>
-                <div className='cta btn-style-3'>Delete Subscription</div>
+                <div className='cta btn-style-3'>Manage Billing</div>
             </div>
             <div className='subtitle'>
                 <h4>Pyament Informations</h4>

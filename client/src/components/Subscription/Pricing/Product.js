@@ -1,19 +1,4 @@
-const Product = ({ product }) => {
-
-  const onSubmit = async () => {
-    const res = await fetch('/api/checkout/create-checkout-session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ price_id: product.price_id }),
-    });
-    const data = await res.json();
-
-    if (data?.error) return; // update error handler
-
-    window.location = data.url;
-  }
+const Product = ({ product, onSubmit }) => {
 
   return (
     <div className='product' style={product.name === 'Premium' ? { transform: 'scale(1.08)' } : {}}>
@@ -26,7 +11,7 @@ const Product = ({ product }) => {
         {product.description[1] && <li>{product.description[1]}</li>}
         <li>24h assistence</li>
       </ul>
-      <div className='button btn-style-1' onClick={onSubmit}>SUBSCRIBE</div>
+      <div className='button btn-style-1' onClick={() => onSubmit(product.id)}>SUBSCRIBE</div>
       <div className='trial-alert'>5 days trial</div>
     </div>
   );
