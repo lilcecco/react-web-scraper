@@ -18,8 +18,7 @@ export const App = () => {
     const [darkMode, setDarkMode] = useState(false);
     const [processes, setProcesses] = useState([]);
     const [blacklist, setBlacklist] = useState([]);
-    const [isLogged, setIsLogged] = useState(false);
-    const [customer, setCustomer] = useState(null);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const getProcesses = async () => {
@@ -36,14 +35,12 @@ export const App = () => {
 
         // Check if the user is logged
         const getUser = async () => {
-            const res = await fetch('/api/auth/customer');
+            const res = await fetch('/api/auth/user');
             const data = await res.json();
 
-            console.log(data);
             if (data?.error) return; // update error handler
 
-            setIsLogged(true);
-            setCustomer(data);
+            setUser(data);
         }
 
         getProcesses();
@@ -172,7 +169,7 @@ export const App = () => {
 
         if (data?.error) return alert(data.error);
 
-        setIsLogged(false);
+        setUser(null);
     }
 
     const providerProcesses = useMemo(() => { return { processes, addProcess } }, [processes]);
@@ -184,12 +181,12 @@ export const App = () => {
                 <Header
                     darkMode={darkMode}
                     setDarkMode={setDarkMode}
-                    isLogged={isLogged}
+                    user={user}
                     logout={logout} />
                 <Routes >
                     <Route path='/' element={<Home />} />
-                    <Route path='/subsription' element={<Subscription customerId={customer?.id} />} />
-                    {isLogged && <Route path='/processes-history' element={(
+                    <Route path='/subsription' element={<Subscription user={user} />} />
+                    {user && <Route path='/processes-history' element={(
                         <ProcessesContext.Provider value={providerProcesses}>
                             <ProcessesHistory />
                         </ProcessesContext.Provider>
@@ -204,8 +201,8 @@ export const App = () => {
                             />
                         </BlacklistContext.Provider>
                     )} />
-                    {!isLogged && <Route path='/auth/:page' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />}
-                    {isLogged && <Route path='/private-area' element={<PrivateArea logout={logout} isLogged={isLogged} />} />}
+                    {!user && <Route path='/auth/:page' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />}
+                    {user && <Route path='/private-area' element={<PrivateArea logout={logout} user={user} />} />}
                     <Route path='*' element={<Error />} />
                 </Routes>
                 <Footer />

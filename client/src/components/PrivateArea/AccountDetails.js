@@ -1,7 +1,4 @@
-import { useState } from "react";
-
-const AccountDetails = ({ isLogged }) => {
-    const [user, setUser] = useState();
+const AccountDetails = ({ user }) => {
 
     return (
         <>
@@ -12,7 +9,7 @@ const AccountDetails = ({ isLogged }) => {
             </div>
             <div className='textbox'>
                 <div>Email</div>
-                <div className='text'>{user?.email}</div>
+                <div className='text'>{user.email}</div>
                 <span></span>
             </div>
             <div className='btn-style-3'>Reset Password</div>

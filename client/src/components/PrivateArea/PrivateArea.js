@@ -5,7 +5,7 @@ import AccountDetails from './AccountDetails';
 import PlaneDetails from './PlaneDetails';
 import './PrivateArea.css';
 
-const PrivateArea = ({ logout, isLogged }) => {
+const PrivateArea = ({ logout, user }) => {
   const navigate = useNavigate();
   
   const [planeDetailsOpen, setPlaneDetailsOpen] = useState(false);
@@ -35,7 +35,7 @@ const PrivateArea = ({ logout, isLogged }) => {
         </ul>
       </div>
       <div className='private-area-data'>
-      {isLogged && (planeDetailsOpen ? <PlaneDetails /> : <AccountDetails isLogged={isLogged} />) /* Loading... */}
+      {user && (planeDetailsOpen ? <PlaneDetails /> : <AccountDetails user={user} />) /* Loading... */}
       </div>
     </main>
   )

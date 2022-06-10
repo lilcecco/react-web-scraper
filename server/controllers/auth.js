@@ -19,13 +19,8 @@ exports.register = async (req, res) => {
     // hash password
     const hashedPassword = await bcrypt.hash(password, 8);
 
-    // create customer id
-    const customer = await stripe.customers.create({
-        email: email,
-    });
-
     // insert new user
-    db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword, customer_id: customer.id }, (err, results) => {
+    db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword }, (err, results) => {
         if (err) {
             console.log(err);
             switch (err.errno) {
@@ -64,16 +59,13 @@ exports.login = (req, res) => {
     });
 }
 
-exports.getCustomer = (req, res) => {
+exports.getUser = (req, res) => {
     const { id } = req.user;
 
-    db.query('SELECT customer_id FROM users WHERE id = ?', [id], async (err, results) => {
+    db.query('SELECT * FROM users WHERE id = ?', [id], async (err, results) => {
         if (err) throw err; // da cambiare
 
-        const result = results[0];
-        const customer = await stripe.customers.retrieve(result.customer_id);
-
-        res.json(customer);
+        res.json(results[0]);
     });
 }
 

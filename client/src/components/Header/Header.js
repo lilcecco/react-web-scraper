@@ -5,7 +5,7 @@ import SwitchMode from './SwitchMode';
 import DropDownMenu from './DropDownMenu';
 import './Header.css';
 
-const Header = ({ darkMode, setDarkMode, isLogged, logout }) => {
+const Header = ({ darkMode, setDarkMode, user, logout }) => {
   const navigate = useNavigate();
 
   const onLogout = () => {
@@ -19,11 +19,11 @@ const Header = ({ darkMode, setDarkMode, isLogged, logout }) => {
       <nav className='nav'>
         <ul>
           <Link to='/'><li>Home</li></Link>
-          {isLogged && <Link to='/processes-history'><li>Scraper</li></Link>}
-            <Link to='/subsription'>{isLogged ? <li className='evi'>FREE TRIAL</li> : <li>Pricing</li>}</Link>
+          {user && <Link to='/processes-history'><li>Scraper</li></Link>}
+            <Link to='/subsription'>{user ? <li className='evi'>FREE TRIAL</li> : <li>Pricing</li>}</Link>
           <li>
-            <FiUser className='user-icon' onClick={isLogged ? null : () => navigate('/auth/login') } />
-            {isLogged && <DropDownMenu onLogout={onLogout} />}
+            <FiUser className='user-icon' onClick={user ? null : () => navigate('/auth/login') } />
+            {user && <DropDownMenu onLogout={onLogout} />}
           </li>
           <li><SwitchMode darkMode={darkMode} setDarkMode={setDarkMode} /></li>
         </ul>
