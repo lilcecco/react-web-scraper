@@ -1,38 +1,33 @@
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
+const mysql = require('mysql');
 
-// exports.createSubscription = async (req, res) => {
-//     const { id, customerId } = req.body;
-
-//     const d = new Date();
-//     d.setDate(d.getDate() + 5);
-//     const trialEnd = parseInt(d.getTime() / 1000);
-//     console.log(trialEnd);
-
-//     const subscription = await stripe.subscriptions.create({
-//         customer: customerId,
-//         items: [{ price: id }],
-//         trial_end: trialEnd,
-//     });
-//     console.log(subscription);
-//     res.json({ subscription });
-// }
+const db = mysql.createConnection({
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE
+});
 
 exports.createCheckoutSession = async (req, res) => {
-    const { id: priceId } = req.body;
+  const { priceId, customerId } = req.body;
 
-    const session = await stripe.checkout.sessions.create({
-        mode: 'subscription',
-        line_items: [
-            {
-                price: priceId,
-                quantity: 1,
-            },
-        ],
-        success_url: `${process.env.CLIENT_URL}/subsription`,
-        cancel_url: `${process.env.CLIENT_URL}/subsription`,
-    });
+  const session = await stripe.checkout.sessions.create({
+    customer: customerId,
+    line_items: [
+      {
+        price: priceId,
+        quantity: 1,
+      },
+    ],
+    mode: 'subscription',
+    // subscription_data: {
+    //   trial_period_days: 5,
+    // },
+    success_url: `${process.env.CLIENT_URL}/subsription`,
+    cancel_url: `${process.env.CLIENT_URL}/subsription`,
+  });
 
-    res.json({ url: session.url });
+  res.json({ url: session.url });
 }
 
 // exports.createPortalSession = async (req, res) => {
@@ -49,53 +44,53 @@ exports.createCheckoutSession = async (req, res) => {
 // } 
 
 exports.webhook = async (req, res) => {
-    let data;
-    let eventType;
-    // Check if webhook signing is configured.
-    const webhookSecret = 'whsec_69a9c5d1bbe228daa1d2c3c254ee04e5c77474341213e23d0e237f36de183dc1'
-    if (webhookSecret) {
-        // Retrieve the event by verifying the signature using the raw body and secret.
-        let event;
-        let signature = req.headers["stripe-signature"];
+  let event = req.body;
 
-        try {
-            event = stripe.webhooks.constructEvent(
-                req.body,
-                signature,
-                webhookSecret
-            );
-        } catch (err) {
-            console.log(`⚠️  Webhook signature verification failed.`);
-            return res.sendStatus(400);
-        }
-        // Extract the object from the event.
-        data = event.data;
-        eventType = event.type;
-    } else {
-        // Webhook signing is recommended, but if the secret is not configured in `config.js`,
-        // retrieve the event data directly from the request body.
-        data = req.body.data;
-        eventType = req.body.type;
+  const endpointSecret = process.env.ENDPOINT_SECRET;
+
+  if (endpointSecret) {
+    const sig = req.headers['stripe-signature'];
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        endpointSecret,
+      );
+    } catch (err) {
+      console.log(`Webhook signature verification failed.`, err.message);
+      return res.sendStatus(400);
     }
+  }
 
-    switch (eventType) {
-        case 'checkout.session.completed':
-            // Payment is successful and the subscription is created.
-            // You should provision the subscription and save the customer ID to your database.
-            break;
-        case 'invoice.paid':
-            // Continue to provision the subscription as payments continue to be made.
-            // Store the status in your database and check when a user accesses your service.
-            // This approach helps you avoid hitting rate limits.
-            break;
-        case 'invoice.payment_failed':
-            // The payment failed or the customer does not have a valid payment method.
-            // The subscription becomes past_due. Notify your customer and send them to the
-            // customer portal to update their payment information.
-            break;
-        default:
-        // Unhandled event type
-    }
+  let subscription;
 
-    res.sendStatus(200);
+  switch (event.type) {
+    case 'customer.subscription.created':
+      subscription = event.data.object;
+      updateSubscriptionStatus(subscription);
+      break;
+    case 'customer.subscription.updated':
+      subscription = event.data.object;
+      updateSubscriptionStatus(subscription);
+      break;
+    case 'customer.subscription.deleted':
+      subscription = event.data.object;
+      updateSubscriptionStatus(subscription);
+      break;
+    case 'customer.subscription.trial_will_end':
+      // Then define and call a method to handle the subscription trial ending.
+      // handleSubscriptionTrialEnding();
+      break;
+    default:
+      console.log(`Unhandled event type ${event.type}.`);
+  }
+  res.send();
 };
+
+const updateSubscriptionStatus = (subscription) => {
+  const { customer, status, plan } = subscription;
+
+  db.query('UPDATE users SET status = ?, price_id = ? WHERE customer_id = ?', [status, plan.id, customer], (err, results) => {
+    if (err) throw err; // da cambiare
+  });
+}

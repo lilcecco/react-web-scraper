@@ -35,11 +35,12 @@ export const App = () => {
 
         // Check if the user is logged
         const getUser = async () => {
-            const res = await fetch('/api/auth/user');
+            const res = await fetch('/api/data/user');
             const data = await res.json();
 
             if (data?.error) return; // update error handler
 
+            console.log(data);
             setUser(data);
         }
 

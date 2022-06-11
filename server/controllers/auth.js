@@ -10,30 +10,43 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-exports.register = async (req, res) => {
+exports.register = (req, res) => {
     const { id, email, password, confirmPassword } = req.body;
 
-    // check confirm password
-    if (password !== confirmPassword) return res.json({ error: 'Passwords don\'t correspond' });
+    db.query('SELECT email FROM users WHERE email = ?', [email], async (err, results) => {
+        if (err) throw err; // da cambiare
 
-    // hash password
-    const hashedPassword = await bcrypt.hash(password, 8);
+        // check if email already exists
+        if (results.length > 0) return res.json({ error: 'Account with this email already exists' });
 
-    // insert new user
-    db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword }, (err, results) => {
-        if (err) {
-            console.log(err);
-            switch (err.errno) {
-                case 1062:
-                    res.json({ error: 'Account with this email already exists' });
-                    return;
-                default:
-                    res.json({ error: 'Adding new user throw error, try again' });
-                    return;
+        // check confirm password
+        if (password !== confirmPassword) return res.json({ error: 'Passwords don\'t correspond' });
+
+        // hash password
+        const hashedPassword = await bcrypt.hash(password, 8);
+
+        // create customer
+        const customer = await stripe.customers.create({
+            email: email
+        });
+
+        // insert new user
+        db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword, customer_id: customer.id }, (err, results) => {
+            if (err) {
+                console.log(err);
+                // possiamo toglierlo --> aggiunto controllo prima
+                switch (err.errno) {
+                    case 1062:
+                        res.json({ error: 'Account with this email already exists' });
+                        return;
+                    default:
+                        res.json({ error: 'Adding new user throw error, try again' });
+                        return;
+                }
             }
-        }
 
-        res.json({ message: '' });
+            res.json({ message: '' });
+        });
     });
 }
 
@@ -56,16 +69,6 @@ exports.login = (req, res) => {
 
         // default returned value
         res.json({ error: 'Invalid email or password' });
-    });
-}
-
-exports.getUser = (req, res) => {
-    const { id } = req.user;
-
-    db.query('SELECT * FROM users WHERE id = ?', [id], async (err, results) => {
-        if (err) throw err; // da cambiare
-
-        res.json(results[0]);
     });
 }
 

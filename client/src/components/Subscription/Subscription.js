@@ -4,7 +4,7 @@ import './Subscription.css';
 
 const Subscription = ({ user }) => {
 
-  const createCheckoutSession = async (id) => {
+  const createCheckoutSession = async (priceId) => {
     if (!user) return alert('You have to create a new account first');
 
     const res = await fetch('/api/checkout/create-checkout-session', {
@@ -12,7 +12,7 @@ const Subscription = ({ user }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({ priceId, customerId: user.customer_id }),
     });
     const data = await res.json();
 
@@ -32,21 +32,6 @@ const Subscription = ({ user }) => {
   //   const data = await res.json();
 
   //   window.location = data.url;
-  // }
-
-  // const createSubscription = async (id) => {
-  //   if (!user) return alert('You have to create a new account first');
-
-  //   const res = await fetch('/api/checkout/create-subscription', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({ id }),
-  //   });
-  //   const data = await res.json();
-
-  //   console.log(data);
   // }
 
   return (

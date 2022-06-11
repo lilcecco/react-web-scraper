@@ -12,13 +12,6 @@ const PlaneDetails = () => {
                 <span></span>
                 <div className='cta btn-style-3'>Manage Billing</div>
             </div>
-            <div className='subtitle'>
-                <h4>Pyament Informations</h4>
-                <span></span>
-            </div>
-            <div className='textbox'>
-                <div className='text'>No pyament informations</div>
-            </div>
         </>
     );
 }
