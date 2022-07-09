@@ -5,7 +5,7 @@ import SwitchMode from './SwitchMode';
 import DropDownMenu from './DropDownMenu';
 import './Header.css';
 
-const Header = ({ darkMode, setDarkMode, user, logout }) => {
+const Header = ({ darkMode, setDarkMode, user, logout, subscribed }) => {
   const navigate = useNavigate();
 
   const onLogout = () => {
@@ -19,27 +19,14 @@ const Header = ({ darkMode, setDarkMode, user, logout }) => {
       <nav className='nav'>
         <ul>
           <Link to='/'><li>Home</li></Link>
-          {user ? (
-            user.status === 'active' || user.status === 'trialing' ? (
-              <Link to='/processes-history'><li>Scraper</li></Link>
-            ) : (
-              null
-            )) : (
-            null
+          {subscribed() && <Link to='/processes-history'><li>Scraper</li></Link>}
+          {subscribed() ? (
+            <li className='evi'>{subscribed().toUpperCase()}</li>
+          ) : (
+            <Link to='/pricing'><li>Pricing</li></Link>
           )}
-          <Link to='/subsription'>{user ? (
-            user.status === 'active' ? (
-              user.status === 'trialing' ? (
-                <li className='evi'>FREE TRIAL</li>
-              ) : (
-                <li className='evi'>{user.prod_name.toUpperCase()}</li>
-              )) : (
-              <li>Pricing</li>
-            )) : (
-            <li>Pricing</li>
-          )}</Link>
           <li>
-            <FiUser className='user-icon' onClick={user ? null : () => navigate('/auth/login')} />
+            <FiUser className='user-icon' onClick={user ? () => navigate('/private-area/account-details') : () => navigate('/auth/login')} />
             {user && <DropDownMenu onLogout={onLogout} />}
           </li>
           <li><SwitchMode darkMode={darkMode} setDarkMode={setDarkMode} /></li>

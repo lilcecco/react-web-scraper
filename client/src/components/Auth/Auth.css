@@ -4,6 +4,7 @@
 
 .auth-bg, 
 .auth-form-container {
+    position: relative;
     width: 50%;
 }
 

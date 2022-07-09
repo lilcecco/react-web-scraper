@@ -10,14 +10,19 @@
     --color-2: #8E8CB9;
     --color-3: #D0CDE0;
     --color-4: #F9F7FF;
+    --color-5: #171C2B;
 }
 
 body {font-family: 'Cairo', sans-serif; font-size: 20px; color: var(--color-2);}
 
-main {
-    width: 1340px;
-    height: 770px;
-    margin: 0 auto;
+#root {
+    position: relative;
+    min-height: 100vh;
+    padding: 50px;
+}
+
+.dark-theme {
+    background-color: var(--color-5);
 }
 
 h1 {font-size: 48px; font-weight: 400; line-height: 1; color: var(--color-1);}
@@ -27,6 +32,12 @@ h4 {font-size: 24px; font-weight: 400; line-height: 1;}
 
 a {text-decoration: none; color: inherit;}
 ul, ol, li {list-style-type: none;}
+
+main {
+    width: 1340px;
+    height: 770px;
+    margin: 0 auto;
+}
 
 .button {
     display: flex;
@@ -94,6 +105,32 @@ textarea::-webkit-scrollbar {
 
 ::placeholder {
     color: var(--color-3);
+}
+
+/* Messages */
+.message-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    font-size: 18px;
+    line-height: 1;
+    color: #4BB543;
+}
+
+.error {
+    color: red;
+}
+
+.message {
+    width: 430px;
+    word-wrap: break-word;
+}
+
+.message-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.5;
 }
 
 /* Helpers */

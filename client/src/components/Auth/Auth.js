@@ -14,7 +14,7 @@ const Auth = ({ onLogin, onRegister }) => {
     return (
         <main className='auth-container'>
             <div className='auth-bg'>
-                <img className='img-res' src='/img/blue-waves.jpg' alt=''></img>
+                <img className='img-res' src='/img/blue-waves.jpg' alt='' />
             </div>
             <div className='auth-form-container'>
                 {page === 'login' ? (

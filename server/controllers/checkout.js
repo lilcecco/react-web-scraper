@@ -20,28 +20,28 @@ exports.createCheckoutSession = async (req, res) => {
       },
     ],
     mode: 'subscription',
-    // subscription_data: {
-    //   trial_period_days: 5,
-    // },
-    success_url: `${process.env.CLIENT_URL}/subsription`,
-    cancel_url: `${process.env.CLIENT_URL}/subsription`,
+    subscription_data: {
+      trial_period_days: 5,
+    },
+    success_url: `${process.env.CLIENT_URL}/private-area/plan-details`,
+    cancel_url: `${process.env.CLIENT_URL}/pricing`,
   });
 
   res.json({ url: session.url });
 }
 
-// exports.createPortalSession = async (req, res) => {
-//     const { customerId } = req.body;
+exports.createPortalSession = async (req, res) => {
+    const { customerId } = req.body;
 
-//     const returnUrl = `${process.env.CLIENT_URL}/subscription`;
+    const returnUrl = `${process.env.CLIENT_URL}/private-area/plan-details`;
 
-//     const portalSession = await stripe.billingPortal.sessions.create({
-//         customer: customerId,
-//         return_url: returnUrl,
-//     });
+    const portalSession = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: returnUrl,
+    });
 
-//     res.json({ url: portalSession.url })
-// } 
+    res.json({ url: portalSession.url })
+} 
 
 exports.webhook = async (req, res) => {
   let event = req.body;

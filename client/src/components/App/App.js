@@ -6,10 +6,12 @@ import Scraper from '../Scraper';
 import Footer from '../Footer';
 import Auth from '../Auth';
 import Home from '../Home';
-import Subscription from '../Subscription';
+import Pricing from '../Pricing';
 import Error from '../Error';
 import PrivateArea from '../PrivateArea';
 import './App.css';
+import ResetPassword from '../ResetPassword/ResetPassword';
+
 
 export const ProcessesContext = React.createContext();
 export const BlacklistContext = React.createContext();
@@ -48,6 +50,14 @@ export const App = () => {
         getBlacklist();
         getUser();
     }, []);
+
+    useEffect(() => {
+        if (darkMode) {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    }, [darkMode]);
 
     // Add New Process
     const addProcess = async (process) => {
@@ -142,8 +152,6 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) return alert(data.error);
-
         return data;
     }
 
@@ -158,12 +166,10 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) return alert(data.error);
-
         return data;
     }
 
-    // Logout (must be updated)
+    // Logout
     const logout = async () => {
         const res = await fetch('/api/auth/logout');
         const data = await res.json();
@@ -173,41 +179,56 @@ export const App = () => {
         setUser(null);
     }
 
+    // check user subscription status
+    const subscribed = () => {
+        if (user) {
+            switch (user.status) {
+                case 'active':
+                    return user.prod_name;
+                case 'trialing':
+                    return 'free trial';
+                default:
+                    return;
+            }
+        }
+    }
+
     const providerProcesses = useMemo(() => { return { processes, addProcess } }, [processes]);
     const providerBalcklist = useMemo(() => { return { blacklist, deleteBlacklistElem, addBlacklistElement } }, [blacklist]);
 
     return (
         <Router>
-            <div className='container' style={darkMode ? { backgroundColor: '#171C2B' } : {}}>
-                <Header
-                    darkMode={darkMode}
-                    setDarkMode={setDarkMode}
-                    user={user}
-                    logout={logout} />
-                <Routes >
-                    <Route path='/' element={<Home />} />
-                    <Route path='/subsription' element={<Subscription user={user} />} />
-                    {user && <Route path='/processes-history' element={(
-                        <ProcessesContext.Provider value={providerProcesses}>
-                            <ProcessesHistory />
-                        </ProcessesContext.Provider>
-                    )} />}
-                    <Route path='/process/:id' element={(
-                        <BlacklistContext.Provider value={providerBalcklist} >
-                            <Scraper
-                                processes={processes}
-                                setProcesses={setProcesses}
-                                deleteProcess={deleteProcess}
-                                scrapeData={scrapeData}
-                            />
-                        </BlacklistContext.Provider>
-                    )} />
-                    {!user && <Route path='/auth/:page' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />}
-                    {user && <Route path='/private-area' element={<PrivateArea logout={logout} user={user} />} />}
-                    <Route path='*' element={<Error />} />
-                </Routes>
-                <Footer />
-            </div>
+            <Header
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+                user={user}
+                logout={logout}
+                subscribed={subscribed}
+            />
+            <Routes >
+                <Route path='/' element={<Home />} />
+                {!subscribed() && <Route path='/pricing' element={<Pricing user={user} />} />}
+                {subscribed() && <Route path='/processes-history' element={(
+                    <ProcessesContext.Provider value={providerProcesses}>
+                        <ProcessesHistory />
+                    </ProcessesContext.Provider>
+                )} />}
+                <Route path='/process/:id' element={(
+                    <BlacklistContext.Provider value={providerBalcklist} >
+                        <Scraper
+                            processes={processes}
+                            setProcesses={setProcesses}
+                            deleteProcess={deleteProcess}
+                            scrapeData={scrapeData}
+                        />
+                    </BlacklistContext.Provider>
+                )} />
+                {!user && <Route path='/auth/:page' element={<Auth onLogin={onLogin} onRegister={onRegister} />} />}
+                {user && <Route path='/private-area/:page' element={<PrivateArea logout={logout} user={user} subscribed={subscribed} />} />}
+                <Route path='/reset-password/:page' element={<ResetPassword />} />
+                <Route path='*' element={<Error />} />
+            </Routes>
+            <Footer />
         </Router>
     );
 }
