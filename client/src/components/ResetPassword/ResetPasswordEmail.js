@@ -1,10 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FiXOctagon, FiCheckCircle } from "react-icons/fi";
 
 const ResetPasswordEmail = () => {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('');
+  const [btnValue, setBtnValue] = useState('SEND');
+
+  // spinner init
+  useEffect(() => {
+    const showSpinner = () => {
+      setBtnValue('');
+      spinner.classList.remove('hidden');
+    }
+
+    const hideSpinner = () => {
+      setBtnValue('SEND');
+      spinner.classList.add('hidden');
+    }
+
+    const spinner = document.querySelector('.lds-dual-ring');
+
+    document.addEventListener('busy', (e) => {
+      if (e.detail) {
+        showSpinner();
+      } else {
+        hideSpinner();
+      }
+    });
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault(e);
@@ -12,7 +36,10 @@ const ResetPasswordEmail = () => {
     // reset default
     setSuccessMessage('');
     setErrorMessage('');
-    setEmail('')
+    setEmail('');
+
+    // show spinner
+    document.dispatchEvent(new CustomEvent('busy', { detail: true }));
 
     // send email
     const res = await fetch('/api/auth/reset-password-email', {
@@ -24,6 +51,10 @@ const ResetPasswordEmail = () => {
     });
     const data = await res.json();
 
+    // hide spinner
+    document.dispatchEvent(new CustomEvent('busy', { detail: false }));
+
+    // handle error
     if (data?.error) return setErrorMessage(data.error);
 
     setSuccessMessage(data.message);
@@ -48,7 +79,10 @@ const ResetPasswordEmail = () => {
             value={email} onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <input type='submit' className='button btn-style-1' value='SEND' />
+        <div className='button-container'>
+          <input type='submit' className='button btn-style-1' value={btnValue} />
+          <div className="lds-dual-ring hidden"></div>
+        </div>
       </form>
     </div>
   );

@@ -1,0 +1,30 @@
+.cookies-banner {
+    position: fixed;
+    bottom: 0; left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center ;
+    gap: 35px;
+    width: 100%;
+    padding: 12px;
+    background-color: var(--color-4);
+    z-index: 1;
+}
+
+.cookies-banner p {
+    width: 60%;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.cookies-banner .button {
+    width: 90px;
+    height: 45px;
+    border-radius: 3px;
+    font-size: 18px;
+}
+
+.cookies-icon {
+    width: 65px;
+    height: 65px;
+}

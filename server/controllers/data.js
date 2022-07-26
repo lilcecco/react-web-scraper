@@ -8,7 +8,9 @@ const db = mysql.createConnection({
 });
 
 exports.getProcesses = (req, res) => {
-    db.query('SELECT * FROM processes', (err, results) => {
+    const { id } = req.user;
+
+    db.query('SELECT id, name, urls, status, results FROM processes WHERE user_id = ?', [id], (err, results) => {
         if (err) throw err; // da cambiare
         
         const parsedResults = results.map(result => {return { ...result, urls: JSON.parse(result.urls), results: JSON.parse(result.results) }});
@@ -37,7 +39,7 @@ exports.getUser = (req, res) => {
     const { id } = req.user;
 
     const sql = '\
-    SELECT users.email, users.customer_id, users.status, products.prod_name\
+    SELECT users.id, users.email, users.customer_id, users.status, products.prod_name\
     FROM users\
     LEFT JOIN products ON users.price_id = products.price_id\
     WHERE id = ?'
@@ -54,10 +56,7 @@ exports.setProcess = (req, res) => {
     const parsedProcess = { ...process, urls: JSON.stringify(process.urls), results: JSON.stringify(process.results) };
 
     db.query('INSERT INTO processes SET ?', parsedProcess, (err, results) => {
-        if (err) {
-            res.json({ error: 'Adding new process throw error, try again' });
-            return;
-        }
+        if (err) return res.json({ error: 'Adding new process throw error, try again' });
 
         res.json({ message: '' });
     });
@@ -67,10 +66,7 @@ exports.setBlacklistElement = (req, res) => {
     const blacklistElem = req.body;
 
     db.query('INSERT INTO blacklist SET ?', blacklistElem, (err, result) => {
-        if (err) {
-            res.json({ error: 'Adding new blacklist element throw error, try again' });
-            return;
-        }
+        if (err) return res.json({ error: 'Adding new blacklist element throw error, try again' });
 
         res.json({ message: '' });
     });
@@ -80,10 +76,7 @@ exports.deleteProcess = (req, res) => {
     const { id } = req.body;
 
     db.query('DELETE FROM processes WHERE id = ?', [id], (err, result) => {
-        if (err || result.affectedRows < 1) {
-            res.json({ error: 'Deleting process throw error, try again' });
-            return;
-        }
+        if (err || result.affectedRows < 1) return res.json({ error: 'Deleting process throw error, try again' });
 
         res.json({ message: '' });
     });
@@ -93,10 +86,7 @@ exports.deleteBlacklistElement = (req, res) => {
     const { id } = req.body;
 
     db.query('DELETE FROM blacklist WHERE id = ?', [id], (err, result) => {
-        if (err || result.affectedRows < 1) {
-            res.json({ error: 'Deleting blacklist element throw error, try again' });
-            return;
-        }
+        if (err || result.affectedRows < 1) return res.json({ error: 'Deleting blacklist element throw error, try again' });
 
         res.json({ message: '' });
     });

@@ -11,11 +11,32 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 
+// nodemailer mailtrap test account config
+const transporter = nodemailer.createTransport({
+    host: "smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+        user: "34ae8c6fd69644",
+        pass: "dd49ac613a75ab"
+    }
+});
+
+// nodemailer gmail config
+// const transporter = nodemailer.createTransport({
+//     host: "smtp.gmail.com",
+//     port: 465,
+//     secure: true,
+//     auth: {
+//         user: process.env.EMAIL_USERNAME,
+//         pass: process.env.EMAIL_PASSWORD
+//     }
+// });
+
 exports.register = (req, res) => {
     const { id, email, password, confirmPassword } = req.body;
 
     db.query('SELECT email FROM users WHERE email = ?', [email], async (err, results) => {
-        if (err) throw err; // da cambiare
+        if (err) return res.json({ error: 'Sign up throw error, check your connection and try again' });
 
         // check if email already exists
         if (results.length > 0) return res.json({ error: 'Account with this email already exists' });
@@ -27,15 +48,98 @@ exports.register = (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 8);
 
         // create customer
-        const customer = await stripe.customers.create({
-            email: email
-        });
+        let customer;
+        try {
+            customer = await stripe.customers.create({
+                email: email
+            });
+        } catch {
+            return res.json({ error: 'Sign up throw error, check your connection and try again' });
+        }
 
         // insert new user
         db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword, customer_id: customer.id }, (err, results) => {
-            if (err) return res.json({ error: 'Adding new user throw error, try again' });
+            if (err) return res.json({ error: 'Sign up throw error, check your connection and try again' });
 
-            res.json({ message: 'Account correctly created' });
+            const mailOptions = {
+                from: process.env.EMAIL_USERNAME,
+                to: email,
+                subject: 'Reset password',
+                html: `
+                <!DOCTYPE html>
+        
+                <head>
+                    <meta charset="UTF-8" />
+                    <style>
+                        *,
+                        *::after,
+                        *::before {
+                            box-sizing: border-box;
+                            padding: 0;
+                            margin: 0;
+                        }
+        
+                        body {
+                            font-family: sans-serif;
+                            font-size: 18px;
+                            color: #8E8CB9;
+                            text-align: center;
+                        }
+        
+                        .container {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            max-width: 460px;
+                            padding: 20px;
+                            margin: 0 auto;
+                        }
+        
+                        h1 {
+                            color: #275BE2;
+                            font-weight: 400;
+                        }
+        
+                        h4 {
+                            line-height: 1.5;
+                        }
+        
+                        p {
+                            line-height: 1.3;
+                        }
+        
+                        a {
+                            color: #275BE2;
+                        }
+        
+                        .mt-1 {
+                            margin-top: 10px;
+                        }
+        
+                        .mt-2 {
+                            margin-top: 20px;
+                        }
+                    </style>
+                </head>
+        
+                <body>
+                    <div class="container">
+                        <h1>WELCOME INTO OUR COMUNITY!</h1>
+                        <h4 class="mt-1">Your account is successfully created.</h4>
+                        <p class="mt-2">Now you can make the subscription with 5 free trial days. You can choose between Basic, Premium
+                            and Ultimate. <a href="${process.env.CLIENT_URL}/pricing">Discover more.</a></p>
+                    </div>
+                </body>
+        
+                </html>`,
+            }
+            
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) return res.json({ error: 'Sign up throw error, check your connection and try again' });
+        
+                res.json({ message: 'Account successfully created!' });
+            });
         });
     });
 }
@@ -66,27 +170,6 @@ exports.logout = (req, res) => {
     res.clearCookie('accessToken').json({ message: '' });
 }
 
-// nodemailer mailtrap test account config
-const transporter = nodemailer.createTransport({
-    host: "smtp.mailtrap.io",
-    port: 2525,
-    auth: {
-        user: "34ae8c6fd69644",
-        pass: "dd49ac613a75ab"
-    }
-});
-
-// nodemailer gmail config
-// const transporter = nodemailer.createTransport({
-//     host: "smtp.gmail.com",
-//     port: 465,
-//     secure: true,
-//     auth: {
-//         user: process.env.EMAIL_USERNAME,
-//         pass: process.env.EMAIL_PASSWORD
-//     }
-// });
-
 exports.resetPasswordEmail = (req, res) => {
     const { email } = req.body;
 
@@ -105,80 +188,91 @@ exports.resetPasswordEmail = (req, res) => {
             <!DOCTYPE html>
 
             <head>
-            <meta charset="UTF-8">
-            <style>
-                *,
-                *::after,
-                *::before {
-                    box-sizing: border-box;
-                    padding: 0;
-                    margin: 0;
-                }
+            <meta charset="UTF-8" />
+                <style>
+                    *,
+                    *::after,
+                    *::before {
+                        box-sizing: border-box;
+                        padding: 0;
+                        margin: 0;
+                    }
 
-                body {
-                    font-family: sans-serif;
-                    font-size: 18px;
-                }
+                    body {
+                        font-family: sans-serif;
+                        font-size: 18px;
+                        color: #8E8CB9;
+                    }
 
-                .container {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 20px;
-                }
+                    .container {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 20px;
+                    }
 
-                h4 {
-                    text-align: center;
-                    line-height: 1.5;
-                }
+                    h1 {
+                        text-align: center;
+                        color: #275BE2;
+                        font-weight: 400;
+                    }
 
-                li {
-                    line-height: 1.5;
-                }
+                    h4 {
+                        text-align: center;
+                        line-height: 1.5;
+                    }
 
-                a {
-                    text-decoration: none;
-                }
+                    li {
+                        line-height: 1.5;
+                    }
 
-                .button {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    width: 110px;
-                    height: 45px;
-                    border-radius: 22.5px;
-                    cursor: pointer;
-                    border: 2px solid #275BE2;
-                    color: #275BE2;
-                }
+                    a {
+                        text-decoration: none;
+                    }
 
-                .sub {
-                    font-size: 14px;
-                    color: #D0CDE0;
-                }
+                    .button {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 110px;
+                        height: 45px;
+                        border-radius: 22.5px;
+                        cursor: pointer;
+                        border: 2px solid #275BE2;
+                        color: #275BE2;
+                    }
 
-                .mt-1 {
-                    margin-top: 20px;
-                }
+                    .sub {
+                        font-size: 14px;
+                        color: #D0CDE0;
+                    }
 
-                .mt-2 {
-                    margin-top: 40px;
-                }
-            </style>
+                    .mt-1 {
+                        margin-top: 10px;
+                    }
+
+                    .mt-2 {
+                        margin-top: 20px;
+                    }
+
+                    .mt-3 {
+                        margin-top: 40px;
+                    }
+                </style>
             </head>
 
             <body>
-            <div class="container">
-                <h1>Reset password</h1>
-                <h4 class="mt-2">To reset your password follow the next steps:</h4>
-                <ul class="mt-1">
-                    <li>Click on the following button</li>
-                    <li>Write the new password</li>
-                    <li>Login with the new password</li>
-                </ul>
-                <a href="${process.env.CLIENT_URL}/reset-password/${resetPasswordToken}"><div class=" button mt-2">GO!</div></a>
-                <p class="sub mt-1">*the link will be active for 10 minutes</p>
+                <div class="container">
+                    <h1>RESET PASSWORD</h1>
+                    <h4 class="mt-1">To reset your password follow the next steps:</h4>
+                    <ul class="mt-3">
+                        <li>Click on the following button</li>
+                        <li>Write the new password</li>
+                        <li>Login with the new password</li>
+                    </ul>
+                    <a href="${process.env.CLIENT_URL}/reset-password/${resetPasswordToken}"><div class=" button mt-3">GO!</div></a>
+                    <p class="sub mt-2">*the link will be active for 10 minutes</p>
                 </div>
             </body>
 
@@ -206,6 +300,9 @@ exports.verifyResetPasswordToken = (req, res) => {
 exports.resetPassword = async (req, res) => {
     const { userId, password, confirmPassword } = req.body;
 
+    // check userId
+    if (!userId) return res.json({ error: 'Reset password throw error, try again' });
+
     // check confirm password
     if (password !== confirmPassword) return res.json({ error: 'Passwords do not match' });
 
@@ -214,7 +311,7 @@ exports.resetPassword = async (req, res) => {
     
     // update password
     db.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId], (err, results) => {
-        if (err) return res.json({ error: 'Update password throw error, try again' });
+        if (err) return res.json({ error: 'Reset password throw error, try again' });
 
         res.json({ message: 'Password correctly updated' });
     });

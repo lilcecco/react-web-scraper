@@ -5,7 +5,7 @@ import ResetPasswordForm from "./ResetPasswordForm";
 
 const ResetPasswordToken = ({ token }) => {
   const [isVerified, setIsVerified] = useState(false);
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const verifyToken = async () => {

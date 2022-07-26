@@ -9,9 +9,9 @@ const db = mysql.createConnection({
 });
 
 exports.createCheckoutSession = async (req, res) => {
-  const { priceId, customerId } = req.body;
+  const { priceId, customerId, subStatus } = req.body;
 
-  const session = await stripe.checkout.sessions.create({
+  const sessionOptions = {
     customer: customerId,
     line_items: [
       {
@@ -25,7 +25,11 @@ exports.createCheckoutSession = async (req, res) => {
     },
     success_url: `${process.env.CLIENT_URL}/private-area/plan-details`,
     cancel_url: `${process.env.CLIENT_URL}/pricing`,
-  });
+  }
+
+  if (subStatus === 'canceled') delete sessionOptions['subscription_data']['trial_period_days'];
+
+  const session = await stripe.checkout.sessions.create(sessionOptions);
 
   res.json({ url: session.url });
 }

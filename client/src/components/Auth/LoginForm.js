@@ -1,17 +1,48 @@
 import { Link } from 'react-router-dom';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiXOctagon } from "react-icons/fi";
 
 const LoginForm = ({ onToggle, onLogin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [btnValue, setBtnValue] = useState('LOGIN');
+
+    // spinner init
+    useEffect(() => {
+        const showSpinner = () => {
+          setBtnValue('');
+          spinner.classList.remove('hidden');
+        }
+    
+        const hideSpinner = () => {
+          setBtnValue('LOGIN');
+          spinner.classList.add('hidden');
+        }
+    
+        const spinner = document.querySelector('.lds-dual-ring');
+    
+        document.addEventListener('busy', (e) => {
+          if (e.detail) {
+            showSpinner();
+          } else {
+            hideSpinner();
+          }
+        });
+      }, []);
 
     const onSubmit = async (e) => {
         e.preventDefault();
 
+        // show spinner
+        document.dispatchEvent(new CustomEvent('busy', { detail: true }));
+
         const data = await onLogin({ email, password });
 
+        // hide spinner
+        document.dispatchEvent(new CustomEvent('busy', { detail: false }));
+
+        // handle error
         if (data?.error) return setMessage(data.error);
 
         // reset default
@@ -19,7 +50,9 @@ const LoginForm = ({ onToggle, onLogin }) => {
         setPassword('');
         setMessage('');
 
-        if (data) window.location = '/private-area/account-details';
+        window.location = '/private-area/account-details';
+        // remove isRegistered item from sessionStorage (if exists)
+        sessionStorage.removeItem('isRegistered');
     }
 
     return (
@@ -45,7 +78,10 @@ const LoginForm = ({ onToggle, onLogin }) => {
                 />
             </div>
             <Link to='/reset-password/email'><div className='forgot-passwd'>Forgot password?</div></Link>
-            <input type='submit' className='button btn-style-1' value='LOGIN' />
+            <div className="button-container">
+                <input type='submit' className='button btn-style-1' value={btnValue} />
+                <div className="lds-dual-ring hidden"></div>
+            </div>
             <div className='switch-auth-link'>
                 New user?
                 <span onClick={onToggle}> Sign up</span>

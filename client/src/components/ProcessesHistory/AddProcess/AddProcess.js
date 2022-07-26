@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './AddProcess.css';
 
-const AddProcess = ({ onAdd }) => {
+const AddProcess = ({ onAdd, user }) => {
     const [name, setName] = useState('');
     const [urls, setUrls] = useState('');
 
@@ -15,7 +15,7 @@ const AddProcess = ({ onAdd }) => {
             return;
         }
 
-        onAdd({ id: uuidv4(), name, urls: parsedUrls, status: 'START', results: [] });
+        onAdd({ id: uuidv4(), name, urls: parsedUrls, status: 'START', results: [], user_id: user.user_id });
 
         // reset default
         setName('');

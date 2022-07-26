@@ -12,7 +12,7 @@ const Product = ({ product, onSubmit }) => {
         <li>24h assistence</li>
       </ul>
       <div className='button btn-style-1' onClick={() => onSubmit(product.price_id)}>SUBSCRIBE</div>
-      <div className='trial-alert'>5 days trial</div>
+      <div className='trial-alert'>*5 days trial</div>
     </div>
   );
 }

@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Product from './Product';
 import './Pricing.css';
 
 const Pricing = ({ user }) => {
-  const navigate = useNavigate();
   const [products, setProducts] = useState(null);
 
   useEffect(() => {
@@ -18,18 +16,14 @@ const Pricing = ({ user }) => {
   }, []);
 
   const createCheckoutSession = async (priceId) => {
-    if (!user) {
-      alert('You have to create a new account first');
-      navigate('/auth/register');
-      return;
-    }
+    if (!user) return alert('You must log in to your account or create a new one.');
 
     const res = await fetch('/api/checkout/create-checkout-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ priceId, customerId: user.customer_id }),
+      body: JSON.stringify({ priceId, customerId: user.customer_id, subStatus: user.status }),
     });
     const data = await res.json();
 

@@ -5,7 +5,7 @@ import AddProcess from './AddProcess';
 import Suggestions from './Suggestions';
 import './ProcessesHistory.css';
 
-const ProcessesHistory = () => {
+const ProcessesHistory = ({ user }) => {
     const [showAddProcess, setShowAddProcess] = useState(false);
     const { processes, addProcess } = useContext(ProcessesContext);
 
@@ -27,7 +27,7 @@ const ProcessesHistory = () => {
                     {showAddProcess ? 'CLOSE' : 'NEW'}
                 </div>
             </div>
-            {showAddProcess ? <AddProcess onAdd={onAdd} /> : <Processes processes={processes} />}
+            {showAddProcess ? <AddProcess onAdd={onAdd} user={user} /> : <Processes processes={processes} />}
         </div>
         <Suggestions />
     </main>

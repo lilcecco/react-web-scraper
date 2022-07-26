@@ -9,9 +9,8 @@ import Home from '../Home';
 import Pricing from '../Pricing';
 import Error from '../Error';
 import PrivateArea from '../PrivateArea';
-import './App.css';
 import ResetPassword from '../ResetPassword/ResetPassword';
-
+import './App.css';
 
 export const ProcessesContext = React.createContext();
 export const BlacklistContext = React.createContext();
@@ -210,7 +209,7 @@ export const App = () => {
                 {!subscribed() && <Route path='/pricing' element={<Pricing user={user} />} />}
                 {subscribed() && <Route path='/processes-history' element={(
                     <ProcessesContext.Provider value={providerProcesses}>
-                        <ProcessesHistory />
+                        <ProcessesHistory user={user} />
                     </ProcessesContext.Provider>
                 )} />}
                 <Route path='/process/:id' element={(

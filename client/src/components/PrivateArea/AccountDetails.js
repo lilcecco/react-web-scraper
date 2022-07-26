@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const AccountDetails = ({ user, logout }) => {
+const AccountDetails = ({ user }) => {
 
     return (
         <>
@@ -14,7 +14,7 @@ const AccountDetails = ({ user, logout }) => {
             <div className='text'>{user.email}</div>
             <span></span>
         </div>
-        <Link to='/reset-password/email'><div className='btn-style-3' onClick={logout}>Reset Password</div></Link>
+        <Link to='/reset-password/email'><div className='btn-style-3'>RESET PASSWORD</div></Link>
         </>
     );
 }

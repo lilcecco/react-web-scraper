@@ -3,6 +3,7 @@ import { FiUser } from 'react-icons/fi';
 import Logo from './Logo';
 import SwitchMode from './SwitchMode';
 import DropDownMenu from './DropDownMenu';
+import ProgressBar from './ProgressBar';
 import './Header.css';
 
 const Header = ({ darkMode, setDarkMode, user, logout, subscribed }) => {
@@ -26,12 +27,13 @@ const Header = ({ darkMode, setDarkMode, user, logout, subscribed }) => {
             <Link to='/pricing'><li>Pricing</li></Link>
           )}
           <li>
-            <FiUser className='user-icon' onClick={user ? () => navigate('/private-area/account-details') : () => navigate('/auth/login')} />
+            <FiUser className='user-icon' onClick={user ? () => navigate('/private-area/account-details') : () => navigate('/auth/register')} />
             {user && <DropDownMenu onLogout={onLogout} />}
           </li>
           <li><SwitchMode darkMode={darkMode} setDarkMode={setDarkMode} /></li>
         </ul>
       </nav>
+      <ProgressBar user={user} subscribed={subscribed} />
     </header>
   );
 }

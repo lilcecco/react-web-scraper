@@ -1,16 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiXOctagon, FiCheckCircle } from "react-icons/fi";
 
 const ResetPasswordForm = ({ userId }) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('');
+    const [btnValue, setBtnValue] = useState('RESET');
+
+    // spinner init
+    useEffect(() => {
+        const showSpinner = () => {
+            setBtnValue('');
+            spinner.classList.remove('hidden');
+        }
+
+        const hideSpinner = () => {
+            setBtnValue('RESET');
+            spinner.classList.add('hidden');
+        }
+
+        const spinner = document.querySelector('.lds-dual-ring');
+
+        document.addEventListener('busy', (e) => {
+            if (e.detail) {
+                showSpinner();
+            } else {
+                hideSpinner();
+            }
+        });
+    }, []);
 
     const onSubmit = (e) => {
         e.preventDefault();
 
         const setNewPassword = async () => {
+            // show spinner
+            document.dispatchEvent(new CustomEvent('busy', { detail: true }));
+
             const res = await fetch('/api/auth/reset-password', {
                 method: 'POST',
                 headers: {
@@ -20,6 +47,10 @@ const ResetPasswordForm = ({ userId }) => {
             });
             const data = await res.json();
 
+            // hide spinner
+            document.dispatchEvent(new CustomEvent('busy', { detail: false }));
+
+            // handle error
             if (data?.error) return setErrorMessage(data.error);
 
             setSuccessMessage(data.message);
@@ -68,7 +99,10 @@ const ResetPasswordForm = ({ userId }) => {
                         value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                 </div>
-                <input type='submit' className='button btn-style-1' value='RESET' />
+                <div className="button-container">
+                    <input type='submit' className='button btn-style-1' value={btnValue} />
+                    <div className="lds-dual-ring hidden"></div>
+                </div>
             </form>
         </div>
     );

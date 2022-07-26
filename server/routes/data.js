@@ -7,7 +7,7 @@ const { authenticateToken } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.get('/processes', getProcesses);
+router.get('/processes', authenticateToken, getProcesses);
 router.get('/blacklist', getBlacklist);
 router.get('/products', getProducts);
 router.get('/user', authenticateToken, getUser);

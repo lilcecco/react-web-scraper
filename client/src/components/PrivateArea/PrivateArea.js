@@ -40,7 +40,7 @@ const PrivateArea = ({ logout, user, subscribed }) => {
             <span>Plan Details</span>
           </li>
           <li onClick={onLogout}>
-            <FiLogOut />
+            <FiLogOut/>
             <span>Logout</span>
           </li>
         </ul>
@@ -49,7 +49,7 @@ const PrivateArea = ({ logout, user, subscribed }) => {
         {user && (page === 'plan-details' ? (
           <PlaneDetails subscribed={subscribed} user={user} onSubmit={createPortalSession}/>
         ) : (
-          <AccountDetails user={user} logout={logout} />
+          <AccountDetails user={user} />
         ))}
       </div>
     </main>
