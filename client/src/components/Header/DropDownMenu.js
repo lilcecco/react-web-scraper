@@ -1,18 +1,15 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const DropDownMenu = ({ onLogout }) => {
+  const navigate = useNavigate();
+
   return (
     <ul>
-        <Link to='/private-area/account-details'><li>Account</li></Link>
-        <li style={borderNone} onClick={onLogout}>Logout</li>
-
-        <div className='triangle'></div>
+      <div className='triangle'></div>
+      <li onClick={() => navigate('/private-area/account-details')}>Account</li>
+      <li style={{ border: 'none' }} onClick={onLogout}>Logout</li>
     </ul>
   );
-}
-
-const borderNone = {
-  border: 'none'
 }
 
 export default DropDownMenu;

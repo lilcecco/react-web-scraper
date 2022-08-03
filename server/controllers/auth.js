@@ -36,7 +36,10 @@ exports.register = (req, res) => {
     const { id, email, password, confirmPassword } = req.body;
 
     db.query('SELECT email FROM users WHERE email = ?', [email], async (err, results) => {
-        if (err) return res.json({ error: 'Sign up throw error, check your connection and try again' });
+        if (err) {
+            console.log(err);
+            return res.json({ error: 'Sign up throw error, check your connection and try again' });
+        }
 
         // check if email already exists
         if (results.length > 0) return res.json({ error: 'Account with this email already exists' });
@@ -53,13 +56,17 @@ exports.register = (req, res) => {
             customer = await stripe.customers.create({
                 email: email
             });
-        } catch {
+        } catch (err) {
+            console.log(err);
             return res.json({ error: 'Sign up throw error, check your connection and try again' });
         }
 
         // insert new user
         db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword, customer_id: customer.id }, (err, results) => {
-            if (err) return res.json({ error: 'Sign up throw error, check your connection and try again' });
+            if (err) {
+                console.log(err);
+                return res.json({ error: 'Sign up throw error, check your connection and try again' });
+            }
 
             const mailOptions = {
                 from: process.env.EMAIL_USERNAME,
@@ -136,7 +143,10 @@ exports.register = (req, res) => {
             }
             
             transporter.sendMail(mailOptions, (err, info) => {
-                if (err) return res.json({ error: 'Sign up throw error, check your connection and try again' });
+                if (err) {
+                    console.log(err);
+                    return res.json({ error: 'Sign up throw error, check your connection and try again' });
+                }
         
                 res.json({ message: 'Account successfully created!' });
             });

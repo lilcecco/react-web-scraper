@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const fetch = require('node-fetch');
+const puppeteer = require('puppeteer');
 
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
@@ -8,7 +9,9 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-exports.getScrapedData = (req, res) => {
+exports.scrapeEmailFromWebsites = (req, res) => {
+    const { id, blacklist } = req.body;
+
     const getRawData = (url) => {
         return fetch(url)
             .then((res) => res.text())
@@ -16,73 +19,197 @@ exports.getScrapedData = (req, res) => {
             .catch(() => null);
     };
 
-    const { id, blacklist } = req.body;
-
     db.query('SELECT * FROM processes WHERE id = ?', [id], (err, results) => {
-        if (err) {
-            res.json({ error: 'Start process throw error, try again' });
-            return;
-        }
+        if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
 
         const process = results[0];
         const urls = new Set(JSON.parse(process.urls));
         const data = JSON.parse(process.results) ?? [];
-        let status = process.status;
 
-        // scrape data
-        const scrapeData = async () => {
-            let firstIteration = true;
+        db.query("UPDATE processes SET status = 'running' WHERE id = ?", [id], (err, results) => {
+            if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
 
-            for (let url of urls) {
+            (async () => {
+                for (let url of urls) {
 
-                // change status
-                if (firstIteration) {
+                    // check blacklist urls
+                    if (blacklist.includes(url)) continue;
 
-                    status = 'RUNNING';
-                    firstIteration = false;
+                    // check protocol
+                    if (!/^(http\:|https\:)/.test(url)) url = `http://${url}`;
 
-                    db.query(`UPDATE processes SET status = ? WHERE id = ?`, [status, id], (err, results) => {
-                        if (err) throw err; // da cambiare
-                    });
+                    const rawData = await getRawData(url);
+                    // catch fetch error
+                    if (!rawData) continue;
+
+                    // scrape email
+                    const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,3}/.exec(rawData)?.[0];
+                    if (email) data.push(email);
+
+                    /*
+                     * Numbers scraper (dismissed)
+                     * 
+                     * const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
+                     * if (!data?.numbers) data.numbers = [];
+                     * if (number) data.numbers.push(number);
+                     */
                 }
 
-                // check urls blacklist
-                if (blacklist.includes(url)) continue;
+                console.log(data);
 
-                // check protocol
-                if (!/^(http\:|https\:)/.test(url)) url = `http://${url}`;
+                db.query(`UPDATE processes SET status = ?, results = ? WHERE id = ?`, ['done', JSON.stringify(data), id], (err, results) => {
+                    if (err) return res.json({ error: 'Scrape data throw error, try again' });
 
-                const rawData = await getRawData(url);
-                // catch fetch error
-                if (!rawData) continue;
+                    res.json({ ...process, status: 'done', results: data });
+                });
+            })();
+        });
+    });
+}
 
-                // scrape email
-                const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,3}/.exec(rawData)?.[0];
-                if (email) data.push(email);
+exports.scrapeDataFromGoogleMaps = (req, res) => {
+    const { id } = req.body;
 
-                /*
-                 * Numbers scraper (dismissed)
-                 * 
-                 * const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
-                 * if (!data?.numbers) data.numbers = [];
-                 * if (number) data.numbers.push(number);
-                 */
-            }
+    const acceptCookie = async (page) => {
+        try {
+            await page.click('button[aria-label="Accetta tutto"]');
+        } catch (err) {
+            console.log(err);
+            return res.json({ error: 'Scrape data throw error, try again' });
+        }
+    }
 
-            // update status
-            status = 'DONE';
-            console.log(data); //check
+    const autoScroll = async (page) => {
+        await page.evaluate(async () => {
+            await new Promise((resolve, reject) => {
+                let totalHeight = 0;
+                let distance = 300;
+                let timer = setInterval(() => {
+                    const element = document.querySelectorAll('.ecceSd')[1];
+                    let scrollHeight = element.scrollHeight;
+                    element.scrollBy(0, distance);
+                    totalHeight += distance;
 
-            db.query(`UPDATE processes SET results = ?, status = ? WHERE id = ?`, [JSON.stringify(data), status, id], (err, result) => {
-                if (err) {
-                    res.json({ error: 'Start process throw error, try again' });
-                    return;
-                }
-                
-                res.json({ ...process, urls, status, results: data });
+                    if (totalHeight >= scrollHeight) {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, 100);
             });
+        });
+    }
+
+    const parsePlaces = async (page) => {
+        let places = [];
+
+        const elements = await page.$$('.qBF1Pd');
+        if (elements && elements.length) {
+            for (const el of elements) {
+
+                const name = await el.evaluate(span => span.textContent.replace(/^\s+|\s+$|\"+/gm, ''));
+
+                let url;
+
+                try {
+                    url = await page.$eval(`a[aria-label="${name}"]`, el => el.href);
+                } catch (err) {
+                    console.log(err);
+                    return res.json({ error: 'Scrape data throw error, try again' });
+                }
+
+                places.push({ name, url });
+            }
         }
 
-        scrapeData();
+        return places;
+    }
+
+    const parseData = async (place) => {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+
+        await page.goto(place.url);
+
+        await acceptCookie(page);
+        await page.waitForNetworkIdle();
+
+        const data = await page.$$eval('.CsEnBe', elements => {
+            let data = {};
+            if (elements && elements.length) {
+                for (const element of elements) {
+                    if (/^Sito web:/.test(element.ariaLabel)) {
+                        data.website = element.href;
+                    }
+
+                    if (/^Telefono:/.test(element.ariaLabel)) {
+                        data.number = /\d{2,4}\s?\d{3,6}\s?\d{0,4}/.exec(element.ariaLabel)[0];
+                    }
+                }
+            }
+            return data;
+        });
+
+        browser.close();
+
+        return data;
+    }
+
+    db.query('SELECT * FROM processes WHERE id = ?', [id], (err, results) => {
+        if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
+
+        const process = results[0];
+        const url = process.mapsUrl;
+
+        db.query("UPDATE processes SET status = 'running' WHERE id = ?", [id], (err, results) => {
+            if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
+
+            (async () => {
+                const browser = await puppeteer.launch();
+                const page = await browser.newPage();
+
+                await page.setViewport({
+                    width: 1300,
+                    height: 900
+                });
+
+                try {
+                    await page.goto(url);
+                } catch (err) {
+                    console.log(err);
+                    return res.json({ error: 'Start process throw error, check your connection try again' });
+                }
+                
+                await acceptCookie(page);
+                await page.waitForNetworkIdle();
+
+                let places = [];
+
+                do {
+                    await autoScroll(page);
+
+                    places = await parsePlaces(page);
+
+                } while (!await page.$('.HlvSq'))
+
+                browser.close();
+
+                for (let i = 0; i < places.length; i++) {
+                    try {
+                        places[i] = { ...places[i], ...(await parseData(places[i])) };
+                    } catch (err) {
+                        console.log(err);
+                        return res.json({ error: 'Scrape data throw error, try again' });
+                    }
+                }
+
+                console.log(places);
+
+                db.query("UPDATE processes SET status = 'done', results = ? WHERE id = ?", [JSON.stringify(places), id], (err, results) => {
+                    if (err) return res.json({ error: 'Scrape data throw error, try again' });
+
+                    res.json({ ...process, status: 'done', results: places });
+                });
+            })();
+        });
     });
 }

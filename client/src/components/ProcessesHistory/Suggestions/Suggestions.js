@@ -7,7 +7,7 @@ const Suggestions = () => {
                 <div className="icon" style={{ paddingRight: '3px' }}>
                     <h3>1</h3>
                 </div>
-                <p>At first you have to create a new process clicking the button “new”.</p>
+                <p>At first you have to create a new process clicking on the button “new”.</p>
             </div>
             <div className='suggestion'>
             <div className="icon">

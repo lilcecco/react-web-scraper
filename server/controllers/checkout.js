@@ -27,6 +27,7 @@ exports.createCheckoutSession = async (req, res) => {
     cancel_url: `${process.env.CLIENT_URL}/pricing`,
   }
 
+  // check if the user was alredy subscribed
   if (subStatus === 'canceled') delete sessionOptions['subscription_data']['trial_period_days'];
 
   const session = await stripe.checkout.sessions.create(sessionOptions);

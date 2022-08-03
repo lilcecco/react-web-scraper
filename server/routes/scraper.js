@@ -1,8 +1,9 @@
 const express = require('express');
-const { getScrapedData } = require('../controllers/scraper');
+const { scrapeEmailFromWebsites, scrapeDataFromGoogleMaps } = require('../controllers/scraper');
  
 const router = express.Router();
 
-router.post('/', getScrapedData);
+router.post('/websites', scrapeEmailFromWebsites);
+router.post('/google-maps', scrapeDataFromGoogleMaps);
 
 module.exports = router;

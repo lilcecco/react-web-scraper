@@ -15,7 +15,7 @@
     align-items: center;
 }
 
-.status-bar-container {
+.loading-bar-container {
     position: relative;
     width: 1100px;
     height: 6px;
@@ -23,25 +23,33 @@
     background-color: var(--color-3);
 }
 
-.status-bar {
+.loading-bar {
     position: absolute;
+    display: none;
     top: 50%; left: 0;
     transform: translateY(-50%);
-    width: 0;
+    width: 50px;
     height: 6px;
     border-radius: 3px;
     background-color: var(--color-1);
 }
 
-.status-bar--on {
-    width: 1090px;
+.loading-bar--on {
+    display: block;
+    animation: loading 1.5s linear infinite;
 }
 
-.status-bar--done {
+.loading-bar--full {
+    display: block;
     width: 1100px;
 }
 
-.proc-status {
+@keyframes loading {
+    0% {left: 0;}
+    100% {left: 1050px;}
+}
+
+.process-status {
     display: block;
     height: 14px;
     font-size: 14px;

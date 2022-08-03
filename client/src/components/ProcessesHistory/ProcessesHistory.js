@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { ProcessesContext } from '../App';
 import Processes from './Processes';
 import AddProcess from './AddProcess';
@@ -6,8 +6,12 @@ import Suggestions from './Suggestions';
 import './ProcessesHistory.css';
 
 const ProcessesHistory = ({ user }) => {
-    const [showAddProcess, setShowAddProcess] = useState(false);
     const { processes, addProcess } = useContext(ProcessesContext);
+    const [showAddProcess, setShowAddProcess] = useState(false);
+
+    useEffect(() => {
+        if (!processes.length) setShowAddProcess(true);
+    }, [processes]);
 
     const onAdd = (process) => {
         if (processes.length > 4) {

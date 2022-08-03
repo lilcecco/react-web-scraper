@@ -10,7 +10,7 @@ const db = mysql.createConnection({
 exports.getProcesses = (req, res) => {
     const { id } = req.user;
 
-    db.query('SELECT id, name, urls, status, results FROM processes WHERE user_id = ?', [id], (err, results) => {
+    db.query('SELECT * FROM processes WHERE user_id = ?', [id], (err, results) => {
         if (err) throw err; // da cambiare
         
         const parsedResults = results.map(result => {return { ...result, urls: JSON.parse(result.urls), results: JSON.parse(result.results) }});

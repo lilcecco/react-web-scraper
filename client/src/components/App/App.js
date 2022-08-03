@@ -9,7 +9,7 @@ import Home from '../Home';
 import Pricing from '../Pricing';
 import Error from '../Error';
 import PrivateArea from '../PrivateArea';
-import ResetPassword from '../ResetPassword/ResetPassword';
+import ResetPassword from '../ResetPassword';
 import './App.css';
 
 export const ProcessesContext = React.createContext();
@@ -41,9 +41,12 @@ export const App = () => {
 
             if (data?.error) return; // update error handler
 
-            console.log(data);
+            // console.log(data);
             setUser(data);
         }
+
+        // sessionStorage runningProcesses prop init
+        if (!sessionStorage.getItem('runningProcesses')) sessionStorage.setItem('runningProcesses', JSON.stringify([]));
 
         getProcesses();
         getBlacklist();
@@ -123,9 +126,9 @@ export const App = () => {
         setBlacklist(blacklist.filter(blacklistElem => blacklistElem.id !== id));
     }
 
-    // Scrape Data
-    const scrapeData = async (id) => {
-        const res = await fetch('/api/scraper', {
+    // Scrape Email From Websites
+    const scrapeEmailFromWebsites = async (id) => {
+        const res = await fetch('/api/scraper/websites', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -136,7 +139,22 @@ export const App = () => {
 
         if (data?.error) return alert(data.error);
 
-        // update processes
+        setProcesses(processes.map(process => process.id === id ? data : process));
+    }
+
+    // Scrape Data From Google Maps
+    const scrapeDataFromGoogleMaps = async (id) => {
+        const res = await fetch('/api/scraper/google-maps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+
+        if (data?.error) return alert(data.error);
+
         setProcesses(processes.map(process => process.id === id ? data : process));
     }
 
@@ -218,7 +236,8 @@ export const App = () => {
                             processes={processes}
                             setProcesses={setProcesses}
                             deleteProcess={deleteProcess}
-                            scrapeData={scrapeData}
+                            scrapeEmailFromWebsites={scrapeEmailFromWebsites}
+                            scrapeDataFromGoogleMaps={scrapeDataFromGoogleMaps}
                         />
                     </BlacklistContext.Provider>
                 )} />

@@ -79,6 +79,7 @@ li {
 /* Buttons */
 .button-container {
     position: relative;
+    cursor: pointer;
 }
 
 .button {
