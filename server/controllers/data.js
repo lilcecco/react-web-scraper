@@ -13,7 +13,7 @@ exports.getProcesses = (req, res) => {
     db.query('SELECT * FROM processes WHERE user_id = ?', [id], (err, results) => {
         if (err) throw err; // da cambiare
         
-        const parsedResults = results.map(result => {return { ...result, urls: JSON.parse(result.urls), results: JSON.parse(result.results) }});
+        const parsedResults = results.map(result => {return { ...result, places: JSON.parse(result.places) }});
         res.json(parsedResults);
     });
 }
@@ -53,7 +53,7 @@ exports.getUser = (req, res) => {
 
 exports.setProcess = (req, res) => {
     const process = req.body;
-    const parsedProcess = { ...process, urls: JSON.stringify(process.urls), results: JSON.stringify(process.results) };
+    const parsedProcess = { ...process, places: JSON.stringify(process.places) };
 
     db.query('INSERT INTO processes SET ?', parsedProcess, (err, results) => {
         if (err) return res.json({ error: 'Adding new process throw error, try again' });

@@ -5,13 +5,13 @@ import './AddProcess.css';
 const AddProcess = ({ onAdd, user }) => {
     const [type, setType] = useState('Google Maps');
     const [name, setName] = useState('');
-    const [urls, setUrls] = useState('');
+    const [websites, setWebsites] = useState('');
     const [mapsUrl, setMapsUrl] = useState('');
 
     const onSubmit = (e) => {
         e.preventDefault();
 
-        const parsedUrls = urls.split('\n').filter(url => url);
+        const parsedUrls = [...new Set(websites.split('\n').filter(website => website))].map(website => { return { website } });
 
         if (type === 'Google Maps') {
             if (!mapsUrl) return alert('You have to complete all fields');
@@ -19,11 +19,11 @@ const AddProcess = ({ onAdd, user }) => {
             if (!name || parsedUrls.length === 0) return alert('You have to complete all fields');
         }
 
-        onAdd({ id: uuidv4(), name, type, status: 'start', user_id: user.id, mapsUrl, urls: parsedUrls, results: [] });
+        onAdd({ id: uuidv4(), name, type, status: 'start', user_id: user.id, mapsUrl, places: [...parsedUrls] });
 
         // reset default
         setName('');
-        setUrls('');
+        setWebsites('');
     }
 
     return (
@@ -58,8 +58,8 @@ const AddProcess = ({ onAdd, user }) => {
             ) : (
                 <textarea
                     placeholder='Insert a list of websites'
-                    value={urls}
-                    onChange={(e) => setUrls(e.target.value)}
+                    value={websites}
+                    onChange={(e) => setWebsites(e.target.value)}
                 />
             )}
             <input type='submit' className='button btn-style-1' value='ADD' />

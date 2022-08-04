@@ -23,14 +23,15 @@ exports.scrapeEmailFromWebsites = (req, res) => {
         if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
 
         const process = results[0];
-        const urls = new Set(JSON.parse(process.urls));
-        const data = JSON.parse(process.results) ?? [];
+        let places = JSON.parse(process.places);
 
         db.query("UPDATE processes SET status = 'running' WHERE id = ?", [id], (err, results) => {
             if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
 
             (async () => {
-                for (let url of urls) {
+                for (let place of places) {
+
+                    let url = place.website;
 
                     // check blacklist urls
                     if (blacklist.includes(url)) continue;
@@ -39,28 +40,21 @@ exports.scrapeEmailFromWebsites = (req, res) => {
                     if (!/^(http\:|https\:)/.test(url)) url = `http://${url}`;
 
                     const rawData = await getRawData(url);
+
                     // catch fetch error
                     if (!rawData) continue;
 
                     // scrape email
                     const email = /[\w\.\-]+@[a-z\-]+\.[a-z]{2,3}/.exec(rawData)?.[0];
-                    if (email) data.push(email);
-
-                    /*
-                     * Numbers scraper (dismissed)
-                     * 
-                     * const number = /((\(?)(\+?)(39)(\)?)[\s]?)?(\d{3,4})([\s]?)(\d{3,})([\s]?)(\d{0,4})/.exec(rawData)?.[0];
-                     * if (!data?.numbers) data.numbers = [];
-                     * if (number) data.numbers.push(number);
-                     */
+                    if (email) place.email = email;
                 }
 
-                console.log(data);
+                console.log(places);
 
-                db.query(`UPDATE processes SET status = ?, results = ? WHERE id = ?`, ['done', JSON.stringify(data), id], (err, results) => {
+                db.query("UPDATE processes SET status = 'done', places = ? WHERE id = ?", [JSON.stringify(places), id], (err, results) => {
                     if (err) return res.json({ error: 'Scrape data throw error, try again' });
 
-                    res.json({ ...process, status: 'done', results: data });
+                    res.json({ ...process, status: 'done', places });
                 });
             })();
         });
@@ -204,10 +198,10 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
 
                 console.log(places);
 
-                db.query("UPDATE processes SET status = 'done', results = ? WHERE id = ?", [JSON.stringify(places), id], (err, results) => {
+                db.query("UPDATE processes SET status = 'done', places = ? WHERE id = ?", [JSON.stringify(places), id], (err, results) => {
                     if (err) return res.json({ error: 'Scrape data throw error, try again' });
 
-                    res.json({ ...process, status: 'done', results: places });
+                    res.json({ ...process, status: 'done', places });
                 });
             })();
         });

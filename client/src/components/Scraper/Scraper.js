@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FiArrowLeft, FiX } from 'react-icons/fi';
 import Controller from './Controller';
 import Blacklist from './Blacklist';
+import Console from './Console';
 import './Scraper.css';
 
 const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsites, scrapeDataFromGoogleMaps }) => {
@@ -12,9 +13,6 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
     // Get Process
     const process = useMemo(() => processes.find(process => process.id === id), [processes, id]);
 
-    // Get scraper status
-    // const scraperStatus = useMemo(() => processes.find(process => process.status === 'running'), [processes]);
-
     // Delete Process
     const onDelete = (id) => {
         deleteProcess(id);
@@ -23,7 +21,6 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
 
     // Start Process
     const onToggle = () => {
-        // if (scraperStatus) return alert('Wait the end of the other process to start a new one');
         if (process.status === 'done') return alert('The process is already complete');
 
         // set front end process status
@@ -51,7 +48,7 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
                 </div>
                 <Controller process={process} onToggle={onToggle} />
                 <section className='bottom-section'>
-                    <textarea className='console-container' value={process.results.join('\n')} readOnly />
+                    <Console process={process} />
                     {process.type === 'Websites' && <Blacklist />}
                 </section>
             </main>}
