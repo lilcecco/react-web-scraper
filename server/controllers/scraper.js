@@ -196,7 +196,7 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
                     }
                 }
 
-                console.log(places);
+                // console.log(places);
 
                 db.query("UPDATE processes SET status = 'done', places = ? WHERE id = ?", [JSON.stringify(places), id], (err, results) => {
                     if (err) return res.json({ error: 'Scrape data throw error, try again' });
@@ -205,5 +205,15 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
                 });
             })();
         });
+    });
+}
+
+exports.updateProcessType = (req, res) => {
+    const { id } = req.body;
+
+    db.query("UPDATE processes SET type = 'Websites', status = 'start' WHERE id = ?", [id], (err, results) => {
+        if (err) res.json({ error: 'Update process type throw error, try again' });
+
+        res.json({ message: '' });
     });
 }

@@ -23,7 +23,7 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
     const onToggle = () => {
         if (process.status === 'done') return alert('The process is already complete');
 
-        // set front end process status
+        // set front-end process status as running
         setProcesses(processes.map(process => process.id === id ? { ...process, status: 'running' } : process));
 
         // start scraping
@@ -32,6 +32,22 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
         } else {
             scrapeEmailFromWebsites(id);
         }
+    }
+
+    // Update Process Type
+    const updateProcessType = async () => {
+        const res = await fetch('/api/scraper/update-process-type', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+
+        if (data?.error) return alert(data.error);
+
+        setProcesses(processes.map(process => process.id === id ? { ...process, type: 'Websites', status: 'start' } : process));
     }
 
     return (
@@ -48,7 +64,7 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
                 </div>
                 <Controller process={process} onToggle={onToggle} />
                 <section className='bottom-section'>
-                    <Console process={process} />
+                    <Console process={process} updateProcessType={updateProcessType} />
                     {process.type === 'Websites' && <Blacklist />}
                 </section>
             </main>}

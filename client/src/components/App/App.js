@@ -137,7 +137,11 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) return alert(data.error);
+        if (data?.error) {
+            // set front-end process status as start
+            setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start' } : process));
+            return alert(data.error);
+        }
 
         setProcesses(processes.map(process => process.id === id ? data : process));
     }
@@ -153,7 +157,11 @@ export const App = () => {
         });
         const data = await res.json();
 
-        if (data?.error) return alert(data.error);
+        if (data?.error) {
+            // set front-end process status as start
+            setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start' } : process));
+            return alert(data.error);
+        }
 
         setProcesses(processes.map(process => process.id === id ? data : process));
     }

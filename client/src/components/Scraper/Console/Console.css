@@ -1,5 +1,5 @@
 .console {
-    width: 560px;
+    width: 680px;
     height: 500px;
     padding: 30px 30px 95px 30px;
     background-color: var(--color-4);
@@ -35,9 +35,11 @@
     color: var(--color-4);
 }
 
-.console .display {
+.console ol.display {
+    position: relative;
     height: 100%;
     line-height: 1.3;
+    list-style-position: inside;
     overflow: hidden scroll;
 }
 
@@ -58,3 +60,33 @@
     background: var(--color-2);
     border-radius: 3px;
 }
+
+.console .update-type-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    height: 100%;
+}
+
+.console .update-type-btn {
+    position: relative;
+    width: 210px;
+    height: 35px;
+    font-size: 16px;
+    line-height: 33px;
+    text-align: center;
+    border-radius: 17.5px;
+    border: 1px solid var(--color-1);
+    color: var(--color-1);
+    cursor: pointer;
+}
+
+/* .console .update-type-btn .icon {
+    position: absolute;
+    right: 10px; top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    stroke-width: 1.5;
+} */

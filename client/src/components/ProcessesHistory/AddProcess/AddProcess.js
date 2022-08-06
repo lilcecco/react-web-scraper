@@ -11,7 +11,7 @@ const AddProcess = ({ onAdd, user }) => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        const parsedUrls = [...new Set(websites.split('\n').filter(website => website))].map(website => { return { website } });
+        const parsedUrls = [...new Set(websites.split('\n').filter(website => website && website !== '/'))].map(website => { return { website } });
 
         if (type === 'Google Maps') {
             if (!mapsUrl) return alert('You have to complete all fields');

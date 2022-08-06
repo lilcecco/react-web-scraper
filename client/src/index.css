@@ -70,9 +70,7 @@ a {
     color: inherit;
 }
 
-ul,
-ol,
-li {
+ul {
     list-style-type: none;
 }
 
