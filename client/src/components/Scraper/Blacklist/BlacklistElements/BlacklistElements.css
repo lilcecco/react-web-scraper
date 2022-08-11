@@ -1,10 +1,21 @@
 .blacklist-elements {
     height: 410px;
-    overflow-y: auto;
+    padding-right: 10px;
+    overflow: hidden auto;
 }
 
 .blacklist-elements::-webkit-scrollbar {
-    display: none;
+    width: 6px;
+}
+
+.blacklist-elements::-webkit-scrollbar-track {
+    background: var(--color-3);
+    border-radius: 3px;
+}
+
+.blacklist-elements::-webkit-scrollbar-thumb {
+    background: var(--color-2);
+    border-radius: 3px;
 }
 
 .blacklist-element {
@@ -20,7 +31,7 @@
 }
 
 .blacklist-element .text {
-    width: 220px;
+    width: 210px;
     overflow-x: hidden;
 }
 

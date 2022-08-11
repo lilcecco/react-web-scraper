@@ -48,20 +48,14 @@ const Console = ({ process, updateProcessType }) => {
             <div className="collumn-selectors-container">
                 <h3>RESULTS</h3>
                 <div className='collumn-selectors'>
-                    {(process.type === 'Google Maps' || !isNamesEmpty) && <div className={`collumn-selector ${collumnDiplayed === 'name' && 'collumn-selected'}`} onClick={() => setCollumnDisplayed('name')}>Names</div>}
-                    <div className={`collumn-selector ${collumnDiplayed === 'website' && 'collumn-selected'}`} onClick={() => setCollumnDisplayed('website')}>Websites</div>
-                    {(process.type === 'Google Maps' || !isNumbersEmpty) && <div className={`collumn-selector ${collumnDiplayed === 'number' && 'collumn-selected'}`} onClick={() => setCollumnDisplayed('number')}>Numbers</div>}
-                    <div className={`collumn-selector ${collumnDiplayed === 'email' && 'collumn-selected'}`} onClick={() => setCollumnDisplayed('email')}>Email</div>
+                    {(process.type === 'Google Maps' || !isNamesEmpty) && <div className={`button btn-style-4 ${collumnDiplayed === 'name' && 'collumn-selected'}`} onClick={() => setCollumnDisplayed('name')}>Names</div>}
+                    <div className={`button btn-style-4 ${collumnDiplayed === 'website' && 'collumn-selected'}`} onClick={() => setCollumnDisplayed('website')}>Websites</div>
+                    {(process.type === 'Google Maps' || !isNumbersEmpty) && <div className={`button btn-style-4 ${collumnDiplayed === 'number' && 'collumn-selected'}`} onClick={() => setCollumnDisplayed('number')}>Numbers</div>}
+                    {process.type === 'Websites' && <div className={`button btn-style-4 ${collumnDiplayed === 'email' && 'collumn-selected'}`} onClick={() => setCollumnDisplayed('email')}>Email</div>}
                 </div>
             </div>
-            <ol className='display'>
-                {(collumnDiplayed === 'email' && isEmailEmpty) ? (
-                    <div className='update-type-btn-container'>
-                        {(process.type === 'Google Maps' && process.status === 'done') && <div className='update-type-btn' onClick={updateProcessType}>UPDATE PROCESS TYPE</div>}
-                    </div>
-                ) : (
-                    process.places.map((place, i) => <li className='text' key={`places-info-${i}`} >{place[collumnDiplayed] || '/'}</li>)
-                )}
+            <ol className='console-display'>
+                {(collumnDiplayed !== 'email' || !isEmailEmpty) && process.places.map((place, i) => <li className='text' key={`places-info-${i}`} >{place[collumnDiplayed] || '/'}</li>)}
             </ol>
         </div>
     );

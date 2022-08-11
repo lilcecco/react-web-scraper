@@ -32,8 +32,8 @@ const ResetPasswordToken = ({ token }) => {
       {isVerified ? (
         <ResetPasswordForm userId={userId} />
       ) : (
-        <div className='invalid-token'>
-          <FiAlertTriangle className='icon' />
+        <div className='invalid-token error'>
+          <FiAlertTriangle className='invalid-token-icon' />
           <p>Access forbidden! Make sure that the link from the email is still valid or <Link to='/reset-password/email' style={{ textDecoration: 'underline' }}>send a new email.</Link></p>
         </div>
       )}

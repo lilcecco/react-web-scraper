@@ -4,9 +4,10 @@ import { FiArrowLeft, FiX } from 'react-icons/fi';
 import Controller from './Controller';
 import Blacklist from './Blacklist';
 import Console from './Console';
+import Notices from './Notices';
 import './Scraper.css';
 
-const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsites, scrapeDataFromGoogleMaps }) => {
+const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsites, scrapeDataFromGoogleMaps, notices }) => {
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -45,9 +46,14 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
         });
         const data = await res.json();
 
-        if (data?.error) return alert(data.error);
+        // if (data?.error) return alert(data.error);
 
-        setProcesses(processes.map(process => process.id === id ? { ...process, type: 'Websites', status: 'start' } : process));
+        if (data?.error) {
+            if (!notices[data.error]) return alert(data.error);
+            return setProcesses(processes.map(process => process.id === id ? { ...process, notices: [data.error, ...process.notices] } : process));
+        }
+
+        setProcesses(processes.map(process => process.id === id ? { ...process, type: 'Websites', status: 'start', notices: [data.message, ...process.notices] } : process));
     }
 
     return (
@@ -64,8 +70,9 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
                 </div>
                 <Controller process={process} onToggle={onToggle} />
                 <section className='bottom-section'>
-                    <Console process={process} updateProcessType={updateProcessType} />
-                    {process.type === 'Websites' && <Blacklist />}
+                    <Console process={process} />
+                    <Notices process={process} notices={notices} updateProcessType={updateProcessType} />
+                    <Blacklist />
                 </section>
             </main>}
         </>

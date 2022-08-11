@@ -1,3 +1,4 @@
+import { FiMapPin, FiChrome } from 'react-icons/fi';
 import './Controller.css';
 
 const Controller = ({ process, onToggle }) => {
@@ -5,7 +6,10 @@ const Controller = ({ process, onToggle }) => {
     <div className='controller-container'>
       <section>
         <h2>{process.name.toUpperCase()}</h2>
-        <div>{process.type}</div>
+        <div className='process-type'>
+          {process.type.toUpperCase()}
+          {(process.type === 'Google Maps') ? <FiMapPin className='process-type-icon' /> : <FiChrome className='process-type-icon' />}
+        </div>
       </section>
       <section>
         <div className='controller'>
@@ -18,7 +22,7 @@ const Controller = ({ process, onToggle }) => {
             </div>
           </div>
         </div>
-        <div className='process-status'>{process.status === 'running' && 'Execution...'}</div>
+        <div className='process-execution'>{process.status === 'running' && 'Execution...'}</div>
       </section>
     </div>
   );

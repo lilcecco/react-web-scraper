@@ -19,7 +19,7 @@ const AddProcess = ({ onAdd, user }) => {
             if (!name || parsedUrls.length === 0) return alert('You have to complete all fields');
         }
 
-        onAdd({ id: uuidv4(), name, type, status: 'start', user_id: user.id, mapsUrl, places: [...parsedUrls] });
+        onAdd({ id: uuidv4(), name, type, status: 'start', user_id: user.id, maps_url: mapsUrl, places: [...parsedUrls], notices: [] });
 
         // reset default
         setName('');
@@ -29,18 +29,8 @@ const AddProcess = ({ onAdd, user }) => {
     return (
         <form className='add-process' onSubmit={onSubmit}>
             <div className='types'>
-                <input
-                    type='button'
-                    className={type === 'Google Maps' ? 'type-selected' : ''}
-                    value='Google Maps'
-                    onClick={(e) => setType(e.target.value)}
-                />
-                <input
-                    type='button'
-                    className={type === 'Websites' ? 'type-selected' : ''}
-                    value='Websites'
-                    onClick={(e) => setType(e.target.value)}
-                />
+                <div className={`button btn-style-4 ${type === 'Google Maps' ? 'type-selected' : ''}`} onClick={() => setType('Google Maps')}>Google Maps</div>
+                <div className={`button btn-style-4 ${type === 'Websites' ? 'type-selected' : ''}`} onClick={() => setType('Websites')}>Websites</div>
             </div>
             <input
                 type='text'
@@ -56,11 +46,13 @@ const AddProcess = ({ onAdd, user }) => {
                     onChange={(e) => setMapsUrl(e.target.value)}
                 />
             ) : (
-                <textarea
-                    placeholder='Insert a list of websites'
-                    value={websites}
-                    onChange={(e) => setWebsites(e.target.value)}
-                />
+                <div className='add-process-textarea-container'>
+                    <textarea
+                        placeholder='Insert a list of websites'
+                        value={websites}
+                        onChange={(e) => setWebsites(e.target.value)}
+                    />
+                </div>
             )}
             <input type='submit' className='button btn-style-1' value='ADD' />
         </form>

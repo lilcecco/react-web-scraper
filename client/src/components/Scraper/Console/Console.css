@@ -3,7 +3,7 @@
     height: 500px;
     padding: 30px 30px 95px 30px;
     background-color: var(--color-4);
-    border-radius: 30px;
+    border-radius: 20px;
     box-shadow: 0px 10px 5px 0px rgba(0, 0, 0, 0.15);
 }
 
@@ -19,74 +19,35 @@
     gap: 5px;
 }
 
-.console .collumn-selector {
-    width: 110px;
-    height: 35px;
-    font-size: 16px;
-    line-height: 32px;
-    text-align: center;
-    border: 1px solid var(--color-1);
-    color: var(--color-1);
-    cursor: pointer;
-}
-
 .console .collumn-selected {
     background-color: var(--color-1);
     color: var(--color-4);
 }
 
-.console ol.display {
+ol.console-display {
     position: relative;
     height: 100%;
-    line-height: 1.3;
+    padding-right: 10px;
     list-style-position: inside;
     overflow: hidden scroll;
+    line-height: 1.5;
 }
 
-.console .display .text {
-    margin-bottom: 15px;
+.console-display .text {
+    word-break: break-all;
+    margin-bottom: 2%;
 }
 
-.console .display::-webkit-scrollbar {
+.console-display::-webkit-scrollbar {
     width: 6px;
 }
 
-.console .display::-webkit-scrollbar-track {
+.console-display::-webkit-scrollbar-track {
     background: var(--color-3);
     border-radius: 3px;
 }
 
-.console .display::-webkit-scrollbar-thumb {
+.console-display::-webkit-scrollbar-thumb {
     background: var(--color-2);
     border-radius: 3px;
 }
-
-.console .update-type-btn-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    height: 100%;
-}
-
-.console .update-type-btn {
-    position: relative;
-    width: 210px;
-    height: 35px;
-    font-size: 16px;
-    line-height: 33px;
-    text-align: center;
-    border-radius: 17.5px;
-    border: 1px solid var(--color-1);
-    color: var(--color-1);
-    cursor: pointer;
-}
-
-/* .console .update-type-btn .icon {
-    position: absolute;
-    right: 10px; top: 50%;
-    transform: translateY(-50%);
-    width: 24px;
-    height: 24px;
-    stroke-width: 1.5;
-} */

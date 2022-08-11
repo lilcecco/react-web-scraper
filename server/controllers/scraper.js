@@ -33,13 +33,19 @@ exports.scrapeEmailFromWebsites = (req, res) => {
 
                     let url = place.website;
 
-                    // check blacklist urls
-                    if (blacklist.includes(url)) continue;
+                    // check if url is undefined
+                    if (!url) continue;
 
-                    // check protocol
+                    // check protocol exists
                     if (!/^(http\:|https\:)/.test(url)) url = `http://${url}`;
 
-                    const rawData = await getRawData(url);
+                    // convert url in URL obj
+                    url = new URL(url);
+
+                    // check blacklist urls
+                    if (blacklist.includes(url.hostname.replace(/www\./, ''))) continue;
+
+                    const rawData = await getRawData(url.href);
 
                     // catch fetch error
                     if (!rawData) continue;
@@ -69,7 +75,6 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
             await page.click('button[aria-label="Accetta tutto"]');
         } catch (err) {
             console.log(err);
-            return res.json({ error: 'Scrape data throw error, try again' });
         }
     }
 
@@ -108,7 +113,6 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
                     url = await page.$eval(`a[aria-label="${name}"]`, el => el.href);
                 } catch (err) {
                     console.log(err);
-                    return res.json({ error: 'Scrape data throw error, try again' });
                 }
 
                 places.push({ name, url });
@@ -122,7 +126,11 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
-        await page.goto(place.url);
+        try {
+            await page.goto(place.url);
+        } catch (err) {
+            console.log(err);
+        }
 
         await acceptCookie(page);
         await page.waitForNetworkIdle();
@@ -149,13 +157,25 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
     }
 
     db.query('SELECT * FROM processes WHERE id = ?', [id], (err, results) => {
-        if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
+        if (err) return res.json({ error: 'Errore, prova di nuovo.' });
+
+        // return error function
+        const returnError = (typeError) => {
+            notices.unshift(typeError);
+
+            db.query('UPDATE processes SET notices = ? WHERE id = ?', [JSON.stringify(notices), id], (err, results) => {
+                if (err) return res.json({ error: 'Errore, prova di nuovo.' });
+
+                res.json({ error: typeError });
+            });
+        }
 
         const process = results[0];
-        const url = process.mapsUrl;
+        const url = process.maps_url;
+        let notices = JSON.parse(process.notices);
 
         db.query("UPDATE processes SET status = 'running' WHERE id = ?", [id], (err, results) => {
-            if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
+            if (err) return returnError('GenericScrapeError');
 
             (async () => {
                 const browser = await puppeteer.launch();
@@ -170,9 +190,9 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
                     await page.goto(url);
                 } catch (err) {
                     console.log(err);
-                    return res.json({ error: 'Start process throw error, check your connection try again' });
+                    return returnError('InvalidUrl');
                 }
-                
+
                 await acceptCookie(page);
                 await page.waitForNetworkIdle();
 
@@ -192,16 +212,19 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
                         places[i] = { ...places[i], ...(await parseData(places[i])) };
                     } catch (err) {
                         console.log(err);
-                        return res.json({ error: 'Scrape data throw error, try again' });
+                        return returnError('GenericScrapeError');
                     }
                 }
 
-                // console.log(places);
+                console.log(places);
 
-                db.query("UPDATE processes SET status = 'done', places = ? WHERE id = ?", [JSON.stringify(places), id], (err, results) => {
-                    if (err) return res.json({ error: 'Scrape data throw error, try again' });
+                // update notices
+                notices.unshift('UpdateProcess', 'ScrapeSuccess');
 
-                    res.json({ ...process, status: 'done', places });
+                db.query("UPDATE processes SET status = 'done', places = ?, notices = ? WHERE id = ?", [JSON.stringify(places), JSON.stringify(notices), id], (err, results) => {
+                    if (err) return res.json({ error: 'Errore, prova di nuovo.' });
+
+                    res.json({ ...process, status: 'done', places, notices });
                 });
             })();
         });
@@ -211,9 +234,25 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
 exports.updateProcessType = (req, res) => {
     const { id } = req.body;
 
-    db.query("UPDATE processes SET type = 'Websites', status = 'start' WHERE id = ?", [id], (err, results) => {
-        if (err) res.json({ error: 'Update process type throw error, try again' });
+    // return error function
+    const returnError = (typeError) => {
+        db.query('SELECT notices FROM processes WHERE id = ?', [id], (err, results) => {
+            if (err) return res.json({ error: 'Errore, prova di nuovo.' });
 
-        res.json({ message: '' });
+            let notices = JSON.parse(results[0].notices);
+            notices.unshift(typeError);
+
+            db.query('UPDATE processes SET notices = ? WHERE id = ?', [JSON.stringify(notices), id], (err, results) => {
+                if (err) return res.json({ error: 'Errore, prova di nuovo.' });
+
+                res.json({ error: typeError });
+            });
+        });
+    }
+
+    db.query("UPDATE processes SET type = 'Websites', status = 'start' WHERE id = ?", [id], (err, results) => {
+        if (err) return returnError('UpdateProcessError');
+
+        res.json({ message: 'UpdateProcessSuccess' });
     });
 }

@@ -19,6 +19,7 @@ export const App = () => {
     const [darkMode, setDarkMode] = useState(false);
     const [processes, setProcesses] = useState([]);
     const [blacklist, setBlacklist] = useState([]);
+    const [notices, setNotices] = useState([]);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -34,6 +35,12 @@ export const App = () => {
             setBlacklist(data);
         }
 
+        const getNotices = async () => {
+            const res = await fetch('/api/data/notices');
+            const data = await res.json();
+            setNotices(data);
+        }
+
         // Check if the user is logged
         const getUser = async () => {
             const res = await fetch('/api/data/user');
@@ -45,11 +52,9 @@ export const App = () => {
             setUser(data);
         }
 
-        // sessionStorage runningProcesses prop init
-        if (!sessionStorage.getItem('runningProcesses')) sessionStorage.setItem('runningProcesses', JSON.stringify([]));
-
         getProcesses();
         getBlacklist();
+        getNotices();
         getUser();
     }, []);
 
@@ -159,8 +164,8 @@ export const App = () => {
 
         if (data?.error) {
             // set front-end process status as start
-            setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start' } : process));
-            return alert(data.error);
+            if (!notices[data.error]) return alert(data.error);
+            return setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start', notices: [data.error, ...process.notices] } : process));
         }
 
         setProcesses(processes.map(process => process.id === id ? data : process));
@@ -246,6 +251,7 @@ export const App = () => {
                             deleteProcess={deleteProcess}
                             scrapeEmailFromWebsites={scrapeEmailFromWebsites}
                             scrapeDataFromGoogleMaps={scrapeDataFromGoogleMaps}
+                            notices={notices}
                         />
                     </BlacklistContext.Provider>
                 )} />

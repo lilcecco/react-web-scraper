@@ -13,7 +13,7 @@ exports.getProcesses = (req, res) => {
     db.query('SELECT * FROM processes WHERE user_id = ?', [id], (err, results) => {
         if (err) throw err; // da cambiare
         
-        const parsedResults = results.map(result => {return { ...result, places: JSON.parse(result.places) }});
+        const parsedResults = results.map(result => {return { ...result, places: JSON.parse(result.places), notices: JSON.parse(result.notices) }});
         res.json(parsedResults);
     });
 }
@@ -35,6 +35,17 @@ exports.getProducts = (req, res) => {
     });
 }
 
+exports.getNotices = (req, res) => {
+    db.query('SELECT * FROM notices', (err, results) => {
+        if (err) throw err; // da cambiare
+
+        let parseNotices = {};
+        results.forEach(result => parseNotices[result.id] = { type: result.type, text: result.text });
+
+        res.json(parseNotices);
+    });
+}
+
 exports.getUser = (req, res) => {
     const { id } = req.user;
 
@@ -53,7 +64,7 @@ exports.getUser = (req, res) => {
 
 exports.setProcess = (req, res) => {
     const process = req.body;
-    const parsedProcess = { ...process, places: JSON.stringify(process.places) };
+    const parsedProcess = { ...process, places: JSON.stringify(process.places), notices: JSON.stringify(process.notices) };
 
     db.query('INSERT INTO processes SET ?', parsedProcess, (err, results) => {
         if (err) return res.json({ error: 'Adding new process throw error, try again' });
