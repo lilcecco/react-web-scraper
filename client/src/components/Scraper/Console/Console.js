@@ -55,7 +55,7 @@ const Console = ({ process, updateProcessType }) => {
                 </div>
             </div>
             <ol className='console-display'>
-                {(collumnDiplayed !== 'email' || !isEmailEmpty) && process.places.map((place, i) => <li className='text' key={`places-info-${i}`} >{place[collumnDiplayed] || '/'}</li>)}
+                {(collumnDiplayed !== 'email' || !isEmailEmpty || process.status === 'done') && process.places.map((place, i) => <li className='text' key={`places-info-${i}`} >{place[collumnDiplayed] || '/'}</li>)}
             </ol>
         </div>
     );

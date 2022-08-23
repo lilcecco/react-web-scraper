@@ -22,7 +22,7 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
 
     // Start Process
     const onToggle = () => {
-        if (process.status === 'done') return alert('The process is already complete');
+        if (process.status === 'done') return alert('Il processo è già stato completato');
 
         // set front-end process status as running
         setProcesses(processes.map(process => process.id === id ? { ...process, status: 'running' } : process));
@@ -42,16 +42,12 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ id })
+            body: JSON.stringify({ id, notices: process.notices })
         });
         const data = await res.json();
 
-        // if (data?.error) return alert(data.error);
-
-        if (data?.error) {
-            if (!notices[data.error]) return alert(data.error);
-            return setProcesses(processes.map(process => process.id === id ? { ...process, notices: [data.error, ...process.notices] } : process));
-        }
+        // error handler
+        if (data?.error) return alert(data.error);
 
         setProcesses(processes.map(process => process.id === id ? { ...process, type: 'Websites', status: 'start', notices: [data.message, ...process.notices] } : process));
     }
@@ -71,8 +67,8 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
                 <Controller process={process} onToggle={onToggle} />
                 <section className='bottom-section'>
                     <Console process={process} />
-                    <Notices process={process} notices={notices} updateProcessType={updateProcessType} />
                     <Blacklist />
+                    <Notices process={process} notices={notices} updateProcessType={updateProcessType} />
                 </section>
             </main>}
         </>

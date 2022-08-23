@@ -20,13 +20,24 @@ exports.scrapeEmailFromWebsites = (req, res) => {
     };
 
     db.query('SELECT * FROM processes WHERE id = ?', [id], (err, results) => {
-        if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
+        if (err) return res.json({ error: 'Errore, prova di nuovo.' });
+
+        const returnError = (typeError) => {
+            notices.unshift(typeError);
+
+            db.query('UPDATE processes SET notices = ? WHERE id = ?', [JSON.stringify(notices), id], (err, results) => {
+                if (err) return res.json({ error: 'Errore, prova di nuovo.' });
+
+                res.json({ error: typeError });
+            });
+        }
 
         const process = results[0];
         let places = JSON.parse(process.places);
+        let notices = JSON.parse(process.notices);
 
         db.query("UPDATE processes SET status = 'running' WHERE id = ?", [id], (err, results) => {
-            if (err) return res.json({ error: 'Start process throw error, check your connection try again' });
+            if (err) return returnError('GenericScrapeError');
 
             (async () => {
                 for (let place of places) {
@@ -57,10 +68,13 @@ exports.scrapeEmailFromWebsites = (req, res) => {
 
                 console.log(places);
 
-                db.query("UPDATE processes SET status = 'done', places = ? WHERE id = ?", [JSON.stringify(places), id], (err, results) => {
-                    if (err) return res.json({ error: 'Scrape data throw error, try again' });
+                // update notices
+                notices.unshift('ScrapeSuccess');
 
-                    res.json({ ...process, status: 'done', places });
+                db.query("UPDATE processes SET status = 'done', places = ?, notices = ? WHERE id = ?", [JSON.stringify(places), JSON.stringify(notices), id], (err, results) => {
+                    if (err) return res.json({ error: 'Errore, prova di nuovo.' });
+
+                    res.json({ ...process, status: 'done', places, notices });
                 });
             })();
         });
@@ -122,44 +136,34 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
         return places;
     }
 
-    const parseData = async (place) => {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-
+    const parseData = async (page, url) => {
         try {
-            await page.goto(place.url);
+            await page.goto(url);
+            await page.waitForSelector('.CsEnBe');
+
+            return await page.$$eval('.CsEnBe', elements => {
+                let data = {};
+                if (elements && elements.length) {
+                    for (const element of elements) {
+                        if (/^Sito web:/.test(element.ariaLabel)) {
+                            data.website = element.href;
+                        }
+
+                        if (/^Telefono:/.test(element.ariaLabel)) {
+                            data.number = /\d{2,4}\s?\d{3,6}\s?\d{0,4}/.exec(element.ariaLabel)[0];
+                        }
+                    }
+                }
+                return data;
+            });
         } catch (err) {
             console.log(err);
         }
-
-        await acceptCookie(page);
-        await page.waitForNetworkIdle();
-
-        const data = await page.$$eval('.CsEnBe', elements => {
-            let data = {};
-            if (elements && elements.length) {
-                for (const element of elements) {
-                    if (/^Sito web:/.test(element.ariaLabel)) {
-                        data.website = element.href;
-                    }
-
-                    if (/^Telefono:/.test(element.ariaLabel)) {
-                        data.number = /\d{2,4}\s?\d{3,6}\s?\d{0,4}/.exec(element.ariaLabel)[0];
-                    }
-                }
-            }
-            return data;
-        });
-
-        browser.close();
-
-        return data;
     }
 
     db.query('SELECT * FROM processes WHERE id = ?', [id], (err, results) => {
         if (err) return res.json({ error: 'Errore, prova di nuovo.' });
 
-        // return error function
         const returnError = (typeError) => {
             notices.unshift(typeError);
 
@@ -178,7 +182,7 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
             if (err) return returnError('GenericScrapeError');
 
             (async () => {
-                const browser = await puppeteer.launch();
+                const browser = await puppeteer.launch({ headless: false });
                 const page = await browser.newPage();
 
                 await page.setViewport({
@@ -203,18 +207,11 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
 
                     places = await parsePlaces(page);
 
-                } while (!await page.$('.HlvSq'))
+                } while (!await page.$('.HlvSq'));
 
-                browser.close();
+                for (let i = 0; i < places.length; i++) places[i] = { ...places[i], ...await parseData(page, places[i].url) };
 
-                for (let i = 0; i < places.length; i++) {
-                    try {
-                        places[i] = { ...places[i], ...(await parseData(places[i])) };
-                    } catch (err) {
-                        console.log(err);
-                        return returnError('GenericScrapeError');
-                    }
-                }
+                await browser.close();
 
                 console.log(places);
 
@@ -232,26 +229,12 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
 }
 
 exports.updateProcessType = (req, res) => {
-    const { id } = req.body;
+    const { id, notices } = req.body;
 
-    // return error function
-    const returnError = (typeError) => {
-        db.query('SELECT notices FROM processes WHERE id = ?', [id], (err, results) => {
-            if (err) return res.json({ error: 'Errore, prova di nuovo.' });
+    notices.unshift('UpdateProcessSuccess');
 
-            let notices = JSON.parse(results[0].notices);
-            notices.unshift(typeError);
-
-            db.query('UPDATE processes SET notices = ? WHERE id = ?', [JSON.stringify(notices), id], (err, results) => {
-                if (err) return res.json({ error: 'Errore, prova di nuovo.' });
-
-                res.json({ error: typeError });
-            });
-        });
-    }
-
-    db.query("UPDATE processes SET type = 'Websites', status = 'start' WHERE id = ?", [id], (err, results) => {
-        if (err) return returnError('UpdateProcessError');
+    db.query("UPDATE processes SET type = 'Websites', status = 'start', notices = ? WHERE id = ?", [JSON.stringify(notices), id], (err, results) => {
+        if (err) return res.json({ error: 'Errore, prova di nuovo.' });
 
         res.json({ message: 'UpdateProcessSuccess' });
     });
