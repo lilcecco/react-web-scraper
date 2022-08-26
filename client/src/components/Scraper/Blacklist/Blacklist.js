@@ -4,7 +4,7 @@ import BlacklistElements from './BlacklistElements';
 import AddBlacklistElement from './AddBlacklistElement';
 import './Blacklist.css';
 
-const Blacklist = () => {
+const Blacklist = ({ user }) => {
     const [showAddBlacklistElem, setShowAddBalcklistElem] = useState(false);
     const { blacklist, deleteBlacklistElem, addBlacklistElement } = useContext(BlacklistContext);
 
@@ -23,7 +23,7 @@ const Blacklist = () => {
                 </div>
             </div>
             {showAddBlacklistElem ? (
-                <AddBlacklistElement onAdd={onAdd} />
+                <AddBlacklistElement onAdd={onAdd} user={user}/>
             ) : (
                 <BlacklistElements blacklist={blacklist} onDelete={deleteBlacklistElem} />
             )}

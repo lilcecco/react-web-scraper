@@ -1,9 +1,11 @@
+.header-container {
+    margin-bottom: 50px;
+}
+
 .header {
-    position: relative;
     display: flex;
     justify-content: space-between;
     height: 60px;
-    margin-bottom: 50px;
 }
 
 .logo {

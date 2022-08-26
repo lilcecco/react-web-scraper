@@ -34,7 +34,7 @@ const Pricing = ({ user }) => {
 
   return (
     <>
-    {products && <main>
+    {products && <main className='pricing-container'>
       <div className='pricing-title'>
         <h1>PRICING</h1>
         <div>Welcome into pricing section! Choose the best plane for your business.</div>

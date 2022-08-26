@@ -7,7 +7,7 @@ import Console from './Console';
 import Notices from './Notices';
 import './Scraper.css';
 
-const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsites, scrapeDataFromGoogleMaps, notices }) => {
+const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsites, scrapeDataFromGoogleMaps, notices, user }) => {
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -67,7 +67,7 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
                 <Controller process={process} onToggle={onToggle} />
                 <section className='bottom-section'>
                     <Console process={process} />
-                    <Blacklist />
+                    <Blacklist user={user} />
                     <Notices process={process} notices={notices} updateProcessType={updateProcessType} />
                 </section>
             </main>}

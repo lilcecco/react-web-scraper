@@ -1,3 +1,5 @@
+import { FiCheckCircle } from "react-icons/fi";
+
 const Product = ({ product, onSubmit }) => {
 
   return (
@@ -7,12 +9,11 @@ const Product = ({ product, onSubmit }) => {
         <span className='product-price'>${product.price}</span>/mo
       </div>
       <ul>
-        <li>{product.description[0]}</li>
-        {product.description[1] && <li>{product.description[1]}</li>}
-        <li>24h assistence</li>
+        {product.description.map((description, i) => 
+        <li key={`desc-elem-${i}`}><FiCheckCircle className="desc-elem-icon" />{description}</li>
+        )}
       </ul>
       <div className='button btn-style-1' onClick={() => onSubmit(product.price_id)}>SUBSCRIBE</div>
-      <div className='trial-alert'>*5 days trial</div>
     </div>
   );
 }

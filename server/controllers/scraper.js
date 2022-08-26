@@ -182,14 +182,17 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
             if (err) return returnError('GenericScrapeError');
 
             (async () => {
-                const browser = await puppeteer.launch({ headless: false });
+                // init browser and page
+                const browser = await puppeteer.launch();
                 const page = await browser.newPage();
 
+                // set page dimentions
                 await page.setViewport({
                     width: 1300,
                     height: 900
                 });
 
+                // navigate to insert url
                 try {
                     await page.goto(url);
                 } catch (err) {
@@ -197,11 +200,14 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
                     return returnError('InvalidUrl');
                 }
 
+                // accept cookies
                 await acceptCookie(page);
                 await page.waitForNetworkIdle();
 
+                // init places
                 let places = [];
 
+                // scrape name and maps url
                 do {
                     await autoScroll(page);
 
@@ -209,8 +215,10 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
 
                 } while (!await page.$('.HlvSq'));
 
+                // scrape website and phone numeber
                 for (let i = 0; i < places.length; i++) places[i] = { ...places[i], ...await parseData(page, places[i].url) };
 
+                // close browser
                 await browser.close();
 
                 console.log(places);

@@ -19,7 +19,9 @@ exports.getProcesses = (req, res) => {
 }
 
 exports.getBlacklist = (req, res) => {
-    db.query('SELECT * FROM blacklist', (err, results) => {
+    const { id } = req.user;
+
+    db.query('SELECT * FROM blacklist WHERE user_id = ?', [id], (err, results) => {
         if (err) throw err; // da cambiare
 
         res.json(results);

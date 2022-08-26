@@ -1,9 +1,7 @@
 .progress-bar-container {
-    position: absolute;
-    bottom: -50px; left: 50%;
-    transform: translateX(-50%);
     width: 290px;
     height: 50px;
+    margin: 0 auto;
 }
 
 .progress-bar {
