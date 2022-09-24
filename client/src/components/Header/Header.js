@@ -21,7 +21,6 @@ const Header = ({ darkMode, setDarkMode, user, logout, subscribed }) => {
         <nav className='nav'>
           <ul>
             <Link to='/'><li>Home</li></Link>
-            {subscribed() && <Link to='/dashboard'><li>Dashboard</li></Link>}
             {subscribed() && <Link to='/processes-history'><li>Scraper</li></Link>}
             {subscribed() ? (
               <li className='evi'>{subscribed().toUpperCase()}</li>
