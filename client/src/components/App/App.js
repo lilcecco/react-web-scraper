@@ -10,7 +10,7 @@ import Pricing from '../Pricing';
 import Error from '../Error';
 import PrivateArea from '../PrivateArea';
 import ResetPassword from '../ResetPassword';
-import Dashboard from '../Dashboard';
+// import Dashboard from '../Dashboard';
 import './App.css';
 
 export const ProcessesContext = React.createContext();
@@ -236,7 +236,7 @@ export const App = () => {
             />
             <Routes >
                 <Route path='/' element={<Home />} />
-                {subscribed() && <Route path='/dashboard' element={<Dashboard />} />}
+                {/* {subscribed() && <Route path='/dashboard' element={<Dashboard />} />} */}
                 {!subscribed() && <Route path='/pricing' element={<Pricing user={user} />} />}
                 {subscribed() && <Route path='/processes-history' element={(
                     <ProcessesContext.Provider value={providerProcesses}>
