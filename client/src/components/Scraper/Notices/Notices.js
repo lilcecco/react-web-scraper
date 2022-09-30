@@ -3,7 +3,7 @@ import Tip from './Notice';
 import './Notices.css';
 
 const Notices = ({ process, notices, updateProcessType }) => {
-
+    
     return (
         <div className='notices-container'>
             <div className='notices-header'>
