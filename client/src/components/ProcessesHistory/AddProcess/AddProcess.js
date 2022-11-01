@@ -34,7 +34,7 @@ const AddProcess = ({ onAdd, user }) => {
             </div>
             <input
                 type='text'
-                placeholder='Insert process name (ex. Palestre Roma)'
+                placeholder='Insert process name'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
             />

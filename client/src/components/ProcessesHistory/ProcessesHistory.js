@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react';
 import { ProcessesContext } from '../App';
 import Processes from './Processes';
 import AddProcess from './AddProcess';
-import Suggestions from './Suggestions';
+// import Suggestions from './Suggestions';
 import './ProcessesHistory.css';
 
 const ProcessesHistory = ({ user }) => {
@@ -33,7 +33,7 @@ const ProcessesHistory = ({ user }) => {
             </div>
             {showAddProcess ? <AddProcess onAdd={onAdd} user={user} /> : <Processes processes={processes} />}
         </div>
-        <Suggestions />
+        {/* <Suggestions /> */}
     </main>
 
     );

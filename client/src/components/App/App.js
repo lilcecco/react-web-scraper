@@ -143,8 +143,8 @@ export const App = () => {
         const data = await res.json();
 
         if (data?.error) {
-            if (!notices[data.error]) return alert(data.error);
-            return setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start', notices: [data.error, ...process.notices] } : process));
+            setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start' } : process));
+            return alert(data.error);
         }
 
         setProcesses(processes.map(process => process.id === id ? data : process));
@@ -162,8 +162,11 @@ export const App = () => {
         const data = await res.json();
 
         if (data?.error) {
-            if (!notices[data.error]) return alert(data.error);
-            return setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start', notices: [data.error, ...process.notices] } : process));
+            // if (notices[data.error]) {
+            //     return setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start', notices: [data.error, ...process.notices] } : process));
+            // }
+            setProcesses(processes.map(process => process.id === id ? { ...process, status: 'start' } : process));
+            return alert(data.error);
         }
 
         setProcesses(processes.map(process => process.id === id ? data : process));

@@ -40,7 +40,7 @@ main {
 
 h1 {
     font-size: 48px;
-    font-weight: 400;
+    font-weight: bold;
     line-height: 1;
     color: var(--color-1);
 }
