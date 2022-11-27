@@ -1,13 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-
-const DropDownMenu = ({ onLogout }) => {
-  const navigate = useNavigate();
-
+const DropDownMenu = ({ user }) => {
   return (
     <ul>
       <div className='triangle'></div>
-      <li onClick={() => navigate('/private-area/account-details')}>Account</li>
-      <li style={{ border: 'none' }} onClick={onLogout}>Logout</li>
+      <li>{user.processes_available} processes available!</li>
     </ul>
   );
 }

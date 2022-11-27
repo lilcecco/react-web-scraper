@@ -1,0 +1,8 @@
+.error-page-container {
+    display: grid;
+    place-items: center;
+}
+
+.error-page-container h1 {
+    font-size: 200px;
+}

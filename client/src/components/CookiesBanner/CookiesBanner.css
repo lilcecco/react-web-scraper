@@ -7,7 +7,8 @@
     gap: 35px;
     width: 100%;
     padding: 12px;
-    background-color: var(--color-4);
+    background-color: #fff;
+    box-shadow: 0px -3px 20px 0px rgba(0, 0, 0, 0.06);
     z-index: 1;
 }
 
@@ -20,7 +21,7 @@
 .cookies-banner .button {
     width: 90px;
     height: 45px;
-    border-radius: 3px;
+    border-radius: 0;
     font-size: 18px;
 }
 

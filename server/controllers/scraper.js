@@ -10,7 +10,7 @@ const db = mysql.createConnection({
 });
 
 exports.scrapeEmailFromWebsites = (req, res) => {
-    const { id, blacklist } = req.body;
+    const { id, blacklist, userId, processesAvailable } = req.body;
 
     const getRawData = (url) => {
         return fetch(url)
@@ -20,14 +20,14 @@ exports.scrapeEmailFromWebsites = (req, res) => {
     };
 
     db.query('SELECT * FROM processes WHERE id = ?', [id], (err, results) => {
-        if (err) return res.json({ error: 'Errore di connessione, prova di nuovo.' });
+        if (err) return res.json({ error: 'Connection error, try again' });
 
         const process = results[0];
         let places = JSON.parse(process.places);
         let notices = JSON.parse(process.notices);
 
         db.query("UPDATE processes SET status = 'running' WHERE id = ?", [id], (err, results) => {
-            if (err) return res.json({ error: 'Errore di connessione, prova di nuovo.' });
+            if (err) return res.json({ error: 'Connection error, try again' });
 
             (async () => {
                 for (let place of places) {
@@ -58,13 +58,19 @@ exports.scrapeEmailFromWebsites = (req, res) => {
 
                 console.log(places);
 
-                // update notices
-                notices.unshift('ScrapeSuccess');
+                // update processes available
+                db.query("UPDATE users SET processes_available = ? WHERE id = ?", [processesAvailable - 1, userId], (err, results) => {
+                    if (err) return res.json({ error: 'Connection error, try again' });
 
-                db.query("UPDATE processes SET status = 'done', places = ?, notices = ? WHERE id = ?", [JSON.stringify(places), JSON.stringify(notices), id], (err, results) => {
-                    if (err) return res.json({ error: 'Errore di connessione, prova di nuovo.' });
+                    // update notices
+                    notices.unshift('ScrapeSuccess');
 
-                    res.json({ ...process, status: 'done', places, notices });
+                    // update process
+                    db.query("UPDATE processes SET status = 'done', places = ?, notices = ? WHERE id = ?", [JSON.stringify(places), JSON.stringify(notices), id], (err, results) => {
+                        if (err) return res.json({ error: 'Connection error, try again' });
+
+                        res.json({ ...process, status: 'done', places, notices });
+                    });
                 });
             })();
         });
@@ -72,7 +78,7 @@ exports.scrapeEmailFromWebsites = (req, res) => {
 }
 
 exports.scrapeDataFromGoogleMaps = (req, res) => {
-    const { id } = req.body;
+    const { id, userId, processesAvailable } = req.body;
 
     const acceptCookie = async (page) => {
         try {
@@ -152,11 +158,11 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
     }
 
     db.query('SELECT * FROM processes WHERE id = ?', [id], (err, results) => {
-        if (err) return res.json({ error: 'Errore di connessione, prova di nuovo.' });
+        if (err) return res.json({ error: 'Connection error, try again' });
 
         const stopProcess = (errorMessage) => {
             db.query("UPDATE processes SET status = 'start' WHERE id = ?", [id], (err, results) => {
-                if (err) return res.json({ error: 'Errore di connessione, prova di nuovo.' });
+                if (err) return res.json({ error: 'Connection error, try again' });
 
                 res.json({ error: errorMessage })
             });
@@ -167,7 +173,7 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
         let notices = JSON.parse(process.notices);
 
         db.query("UPDATE processes SET status = 'running' WHERE id = ?", [id], (err, results) => {
-            if (err) return res.json({ error: 'Errore di connessione, prova di nuovo.' });
+            if (err) return res.json({ error: 'Connection error, try again' });
 
             (async () => {
                 // init browser and page
@@ -185,7 +191,7 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
                     await page.goto(url);
                 } catch (err) {
                     console.log(err);
-                    return stopProcess('Url inserito non valido');
+                    return stopProcess('Invalid url');
                 }
 
                 // accept cookies
@@ -211,14 +217,20 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
 
                 console.log(places);
 
-                // update notices
-                notices.unshift('UpdateProcess', 'ScrapeSuccess');
+                // update processes available
+                db.query("UPDATE users SET processes_available = ? WHERE id = ?", [processesAvailable - 1, userId], (err, results) => {
+                    if (err) return res.json({ error: 'Connection error, try again' });
 
-                db.query("UPATE processes SET status = 'done', places = ?, notices = ? WHERE id = ?", [JSON.stringify(places), JSON.stringify(notices), id], (err, results) => {
-                    if (err) return res.json({ error: 'Errore di connessione, cancella il processo e creane uno nuovo.' });
+                    // update notices
+                    notices.unshift('UpdateProcess', 'ScrapeSuccess');
 
-                    res.json({ ...process, status: 'done', places, notices });
-                });
+                    // update process
+                    db.query("UPDATE processes SET status = 'done', places = ?, notices = ? WHERE id = ?", [JSON.stringify(places), JSON.stringify(notices), id], (err, results) => {
+                        if (err) return res.json({ error: 'Connection error, delete the process and create a new one' });
+
+                        res.json({ ...process, status: 'done', places, notices });
+                    });
+                })
             })();
         });
     });
@@ -230,7 +242,7 @@ exports.updateProcessType = (req, res) => {
     notices.unshift('UpdateProcessSuccess');
 
     db.query("UPDATE processes SET type = 'Websites', status = 'start', notices = ? WHERE id = ?", [JSON.stringify(notices), id], (err, results) => {
-        if (err) return res.json({ error: 'Errore di connessione, prova di nuovo.' });
+        if (err) return res.json({ error: 'Connection error, try again' });
 
         res.json({ message: 'UpdateProcessSuccess' });
     });

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Product from './Product';
 import './Pricing.css';
 
-const Pricing = ({ user }) => {
+const Pricing = ({ user, subscribed }) => {
   const [products, setProducts] = useState(null);
 
   useEffect(() => {
@@ -16,7 +16,8 @@ const Pricing = ({ user }) => {
   }, []);
 
   const createCheckoutSession = async (priceId) => {
-    if (!user) return alert('You must log in to your account or create a new one.');
+    if (subscribed()) return alert('You\'re already subscribed');
+    if (!user) return window.location = '/auth/register';
 
     const res = await fetch('/api/checkout/create-checkout-session', {
       method: 'POST',
@@ -34,15 +35,15 @@ const Pricing = ({ user }) => {
 
   return (
     <>
-    {products && <main className='pricing-container'>
+    {products && <div className='pricing-container'>
       <div className='pricing-title'>
-        <h1>PRICING</h1>
-        <div>Welcome into pricing section! Choose the best plane for your business.</div>
+        <h2>DISCOVER THE PACKAGES AVAILABLE</h2>
+        <div>Choose the most covenient package for your business</div>
       </div>
       <div className='products-container'>
         {products.map(product => <Product key={product.prod_name} product={product} onSubmit={createCheckoutSession} />)}
       </div>
-    </main>}
+    </div>}
     </>
   );
 }

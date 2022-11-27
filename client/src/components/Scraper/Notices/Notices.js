@@ -11,7 +11,7 @@ const Notices = ({ process, notices, updateProcessType }) => {
                 <FiBell className='notices-icon' />
             </div>
             <div className='notices'>
-                {process.notices.length < 1 && <div className='notices-empty-text'>Non ci sono avvisi per questo processo.</div>}
+                {process.notices.length < 1 && <div className='notices-empty-text'>There are no notices about this process</div>}
                 {process.notices.map((notice, i) => <Tip key={`notice-${i}`} type={notices[notice]?.type} text={notices[notice]?.text} updateProcessType={process.type === 'Google Maps' ? updateProcessType : null} />)}
             </div>
         </div>

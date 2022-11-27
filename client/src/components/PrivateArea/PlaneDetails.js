@@ -19,7 +19,7 @@ const PlaneDetails = ({ subscribed, user, onSubmit }) => {
             <div className='textbox'>
                 <div className='text'>Your subscription is currently inactive</div>
                 <span></span>
-                <Link to='/pricing'><div className='cta btn-style-3'>MOVE TO PRICING</div></Link>
+                <Link to='/'><div className='cta btn-style-3'>MOVE TO PRICING</div></Link>
             </div>
         )}
         </>

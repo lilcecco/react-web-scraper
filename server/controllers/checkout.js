@@ -20,11 +20,12 @@ exports.createCheckoutSession = async (req, res) => {
       },
     ],
     mode: 'subscription',
+    allow_promotion_codes: true, // enter coupon field
     subscription_data: {
       trial_period_days: 5,
     },
     success_url: `${process.env.CLIENT_URL}/private-area/plan-details`,
-    cancel_url: `${process.env.CLIENT_URL}/pricing`,
+    cancel_url: `${process.env.CLIENT_URL}/`,
   }
 
   // check if the user was alredy subscribed
@@ -36,17 +37,17 @@ exports.createCheckoutSession = async (req, res) => {
 }
 
 exports.createPortalSession = async (req, res) => {
-    const { customerId } = req.body;
+  const { customerId } = req.body;
 
-    const returnUrl = `${process.env.CLIENT_URL}/private-area/plan-details`;
+  const returnUrl = `${process.env.CLIENT_URL}/private-area/plan-details`;
 
-    const portalSession = await stripe.billingPortal.sessions.create({
-        customer: customerId,
-        return_url: returnUrl,
-    });
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: returnUrl,
+  });
 
-    res.json({ url: portalSession.url })
-} 
+  res.json({ url: portalSession.url })
+}
 
 exports.webhook = async (req, res) => {
   let event = req.body;
@@ -86,6 +87,10 @@ exports.webhook = async (req, res) => {
       // Then define and call a method to handle the subscription trial ending.
       // handleSubscriptionTrialEnding();
       break;
+    case 'invoice.paid':
+      invoice = event.data.object;
+      await renewSubscription(invoice);
+      break;
     default:
       console.log(`Unhandled event type ${event.type}.`);
   }
@@ -98,4 +103,26 @@ const updateSubscriptionStatus = (subscription) => {
   db.query('UPDATE users SET status = ?, price_id = ? WHERE customer_id = ?', [status, plan.id, customer], (err, results) => {
     if (err) throw err; // da cambiare
   });
+}
+
+const renewSubscription = async (invoice) => {
+  const { customer, subscription } = invoice;
+
+  const { plan } = await stripe.subscriptions.retrieve(subscription);
+
+    // set processes_available
+    switch (plan.id) {
+      case 'price_1Lb36XJYxt4nzzwuhcwQIXrG': // (basic)
+        processes_available = 30;
+        break;
+      case 'price_1Lb376JYxt4nzzwutijWpN3B': // (premium)
+        processes_available = 300;
+        break;
+      default:
+        processes_available = 'unlimited';
+    }
+
+    db.query("UPDATE users SET processes_available = ? WHERE customer_id = ?", [processes_available, customer], (err, results) => {
+      if (err) throw err; // da cambiare
+    });
 }

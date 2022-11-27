@@ -3,9 +3,13 @@ import { Link } from 'react-router-dom';
 const Logo = () => {
   return (
     <div className='logo'>
-      <Link to='/'><div className='logo-img'></div></Link>
+      <Link to='/'>
+        <div className='logo-img'>
+          <img className="img-res" src="/img/logo.png" art=""></img>
+        </div>
+      </Link>
       <span></span>
-      <Link to='/'><div>Web Scraper</div></Link>
+      <Link to='/'><div>Easy lead generation</div></Link>
     </div>
   );
 }

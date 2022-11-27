@@ -1,6 +1,7 @@
 const express = require('express');
 const { getProcesses, getBlacklist, getProducts, getNotices, getUser,
         setProcess, setBlacklistElement,
+        updUser,
         deleteProcess, deleteBlacklistElement 
     } = require('../controllers/data');
 const { authenticateToken } = require('../middlewares/auth');

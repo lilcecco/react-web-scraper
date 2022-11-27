@@ -1,13 +1,9 @@
-.pricing-container {
-    padding-bottom: 30px;
-}
-
 .pricing-title {
     text-align: center;
     margin-bottom: 80px;
 }
 
-.pricing-title h1 {
+.pricing-title h2 {
     margin-bottom: 10px;
 }
 
@@ -61,6 +57,7 @@
 .product .button {
     position: absolute;
     bottom: 40px;
+    font-size: 20px;
 }
 
 .product .trial-alert {

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { FiXOctagon, FiCheckCircle } from "react-icons/fi";
+import { useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 
-const RegisterForm = ({ onToggle, onRegister, setProgress }) => {
-    const [email, setEmail] = useState('');
+const RegisterForm = ({ onToggle, onRegister }) => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [email, setEmail] = useState(searchParams.get('email') ? searchParams.get('email') : '');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -78,14 +80,14 @@ const RegisterForm = ({ onToggle, onRegister, setProgress }) => {
             <div className='textbox'>
                 <label htmlFor='email'>Email</label>
                 <input
-                    type='text' id='email' name='email' placeholder='Insert email'
+                    type='text' id='email' name='email' placeholder='Enter your email'
                     value={email} onChange={(e) => setEmail(e.target.value)}
                 />
             </div>
             <div className='textbox'>
                 <label htmlFor='password'>Password</label>
                 <input
-                    type='password' id='password' name='password' placeholder='Insert password'
+                    type='password' id='password' name='password' placeholder='Enter password'
                     value={password} onChange={(e) => setPassword(e.target.value)}
                 />
             </div>

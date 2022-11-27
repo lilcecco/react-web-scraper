@@ -17,8 +17,11 @@
     display: block;
     width: 60px;
     height: 60px;
+}
+
+.logo-img img {
     border-radius: 50%;
-    background-color: var(--color-4);
+    box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.15);
 }
 
 .logo span {
@@ -52,18 +55,19 @@
     justify-content: center;
     width: 90px;
     height: 26px;
-    border: 2px solid var(--color-1);
+    border: 1px solid var(--color-1);
     font-size: 14px;
 }
 
+/* Dropdown menu */
 .nav li ul {
     position: absolute;
     top: 40px; left: 50%;
     transform: translateX(-50%);
     display: none;
     height: auto;
-    width: 100px;
-    border-radius: 5px;
+    padding: 8px 13px;
+    border-radius: 3px;
     background-color: var(--color-4);
     box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.15);
     z-index: 99;
@@ -75,13 +79,12 @@
 
 .nav li ul li {
     display: block;
-    height: 30px;
     text-align: center;
     margin-left: 0;
-    font-size: 14px;
-    line-height: 30px;
+    line-height: 1.5;
     color: var(--color-2);
-    border-bottom: 1px solid var(--color-3);
+    font-size: 14px;
+    white-space: nowrap;
 }
 
 .nav li ul .triangle {

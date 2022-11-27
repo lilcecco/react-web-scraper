@@ -13,7 +13,7 @@ const Notice = ({ type, text, updateProcessType }) => {
                     <>
                         <FiInfo className='notice-icon' />
                         <div className='notice-text'>{text}</div>
-                        {type === 'tip' && <div className='button btn-style-4' onClick={updateProcessType}>CONVERTI</div>}
+                        {type === 'tip' && <div className='button btn-style-4' onClick={updateProcessType}>UPDATE</div>}
                     </>
                 )}
             </div>}

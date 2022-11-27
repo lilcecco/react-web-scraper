@@ -34,21 +34,21 @@ const AddProcess = ({ onAdd, user }) => {
             </div>
             <input
                 type='text'
-                placeholder='Insert process name'
+                placeholder='Enter process name'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
             />
             {type === 'Google Maps' ? (
                 <input
                     type='text'
-                    placeholder='Insert a google maps url'
+                    placeholder='Enter a google maps url'
                     value={mapsUrl}
                     onChange={(e) => setMapsUrl(e.target.value)}
                 />
             ) : (
                 <div className='add-process-textarea-container'>
                     <textarea
-                        placeholder='Insert a list of websites'
+                        placeholder='Enter a list of websites'
                         value={websites}
                         onChange={(e) => setWebsites(e.target.value)}
                     />

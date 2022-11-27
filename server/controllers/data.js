@@ -12,8 +12,8 @@ exports.getProcesses = (req, res) => {
 
     db.query('SELECT * FROM processes WHERE user_id = ?', [id], (err, results) => {
         if (err) throw err; // da cambiare
-        
-        const parsedResults = results.map(result => {return { ...result, places: JSON.parse(result.places), notices: JSON.parse(result.notices) }});
+
+        const parsedResults = results.map(result => { return { ...result, places: JSON.parse(result.places), notices: JSON.parse(result.notices) } });
         res.json(parsedResults);
     });
 }
@@ -32,7 +32,7 @@ exports.getProducts = (req, res) => {
     db.query('SELECT * FROM products ORDER BY price ASC', (err, results) => {
         if (err) throw err; // da cambiare
 
-        const parsedResults = results.map(result => {return { ...result, description: JSON.parse(result.description) }});
+        const parsedResults = results.map(result => { return { ...result, description: JSON.parse(result.description) } });
         res.json(parsedResults);
     });
 }
@@ -52,7 +52,7 @@ exports.getUser = (req, res) => {
     const { id } = req.user;
 
     const sql = '\
-    SELECT users.id, users.email, users.customer_id, users.status, products.prod_name\
+    SELECT users.id, users.email, users.customer_id, users.status, products.prod_name, users.processes_available\
     FROM users\
     LEFT JOIN products ON users.price_id = products.price_id\
     WHERE id = ?'

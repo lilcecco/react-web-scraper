@@ -89,7 +89,7 @@ const ResetPasswordForm = ({ userId }) => {
             <form className='reset-password-form' onSubmit={(e) => onSubmit(e)}>
                 <div className='textbox'>
                     <input
-                        type='password' id='password' name='password' placeholder='Insert new password'
+                        type='password' id='password' name='password' placeholder='Enter a new password'
                         value={password} onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>

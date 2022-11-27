@@ -22,7 +22,10 @@ const Scraper = ({ processes, setProcesses, deleteProcess, scrapeEmailFromWebsit
 
     // Start Process
     const onToggle = () => {
-        if (process.status === 'done') return alert('Il processo è già stato completato');
+        if (process.status === 'done') return alert('Process already completed');
+
+        // check if the processes available are enough
+        if (user.processes_available !== 'unlimited' && user.processes_available < 1) return alert('Oops, your monthly processes are finished! Upgrade your plan to get them more');
 
         // set front-end process status as running
         setProcesses(processes.map(process => process.id === id ? { ...process, status: 'running' } : process));

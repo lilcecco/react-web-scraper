@@ -62,7 +62,7 @@ exports.register = (req, res) => {
         }
 
         // insert new user
-        db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword, customer_id: customer.id }, (err, results) => {
+        db.query('INSERT INTO users SET ?', { id, email, password: hashedPassword, customer_id: customer.id}, (err, results) => {
             if (err) {
                 console.log(err);
                 return res.json({ error: 'Sign up throw error, check your connection and try again' });
@@ -168,7 +168,7 @@ exports.login = (req, res) => {
             const user = { id: results[0].id }
 
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-            return res.cookie('accessToken', accessToken, { httpOnly: true, sameSite: 'Strict' }).json({ message: '' });
+            return res.cookie('accessToken', accessToken, { httpOnly: true, sameSite: 'Strict', maxAge: 1800000 }).json({ message: '' }); // expires in 30 minutes
         }
 
         // default returned value

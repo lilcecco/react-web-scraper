@@ -35,7 +35,7 @@ main {
 }
 
 .dark-theme {
-    background-color: var(--color-5);
+    background-color: var(--color-5) !important;
 }
 
 h1 {
@@ -47,14 +47,14 @@ h1 {
 
 h2 {
     font-size: 40px;
-    font-weight: 400;
+    font-weight: bold;
     line-height: 1;
     color: var(--color-1);
 }
 
 h3 {
     font-size: 32px;
-    font-weight: 400;
+    font-weight: bold;
     line-height: 1;
     color: var(--color-1);
 }
@@ -63,6 +63,10 @@ h4 {
     font-size: 24px;
     font-weight: 400;
     line-height: 1;
+}
+
+p {
+    line-height: 1.5;
 }
 
 a {
@@ -166,6 +170,7 @@ input {
     width: 20px;
     height: 20px;
     stroke-width: 1.5;
+    margin-right: 10px;
 }
 
 /* Loading Spinner */

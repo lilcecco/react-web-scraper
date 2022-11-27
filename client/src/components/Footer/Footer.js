@@ -3,7 +3,7 @@ import './Footer.css';
 const Footer = () => {
   return (
     <footer className='footer'>
-        Copyright &copy;2022 webscraper.it. All rights reserved.
+        <div>Copyright &copy;2022 getrid.com. All rights reserved.</div>
     </footer>
   );
 }

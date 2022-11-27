@@ -10,6 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const db = mysql.createConnection({
+    // socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock', // to solve ETIMEOUT error
     host: process.env.HOST,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,

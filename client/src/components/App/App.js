@@ -6,17 +6,17 @@ import Scraper from '../Scraper';
 import Footer from '../Footer';
 import Auth from '../Auth';
 import Home from '../Home';
-import Pricing from '../Pricing';
 import Error from '../Error';
 import PrivateArea from '../PrivateArea';
 import ResetPassword from '../ResetPassword';
+import CookiesBanner from '../CookiesBanner';
 import './App.css';
 
 export const ProcessesContext = React.createContext();
 export const BlacklistContext = React.createContext();
 
 export const App = () => {
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(window.localStorage.getItem('darkMode'));
     const [processes, setProcesses] = useState([]);
     const [blacklist, setBlacklist] = useState([]);
     const [notices, setNotices] = useState([]);
@@ -59,7 +59,7 @@ export const App = () => {
     }, []);
 
     useEffect(() => {
-        if (darkMode) {
+        if (darkMode && darkMode == 'on') {
             document.body.classList.add('dark-theme');
         } else {
             document.body.classList.remove('dark-theme');
@@ -138,7 +138,7 @@ export const App = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id, blacklist: blacklist.map(blacklistElem => blacklistElem.url) })
+            body: JSON.stringify({ id, blacklist: blacklist.map(blacklistElem => blacklistElem.url), userId: user.id, processesAvailable: user.processes_available })
         });
         const data = await res.json();
 
@@ -148,6 +148,9 @@ export const App = () => {
         }
 
         setProcesses(processes.map(process => process.id === id ? data : process));
+
+        // update front-end processes available
+        setUser({ ...user, processes_available: user.processes_available - 1 });
     }
 
     // Scrape Data From Google Maps
@@ -157,7 +160,7 @@ export const App = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id })
+            body: JSON.stringify({ id, userId: user.id, processesAvailable: user.processes_available })
         });
         const data = await res.json();
 
@@ -170,6 +173,9 @@ export const App = () => {
         }
 
         setProcesses(processes.map(process => process.id === id ? data : process));
+
+        // update front-end processes available
+        setUser({ ...user, processes_available: user.processes_available - 1 });
     }
 
     // Login
@@ -233,12 +239,10 @@ export const App = () => {
                 darkMode={darkMode}
                 setDarkMode={setDarkMode}
                 user={user}
-                logout={logout}
                 subscribed={subscribed}
             />
             <Routes >
-                <Route path='/' element={<Home />} />
-                {!subscribed() && <Route path='/pricing' element={<Pricing user={user} />} />}
+                <Route path='/' element={<Home user={user} subscribed={subscribed} darkMode={darkMode} />} />
                 {subscribed() && <Route path='/processes-history' element={(
                     <ProcessesContext.Provider value={providerProcesses}>
                         <ProcessesHistory user={user} />
@@ -262,6 +266,7 @@ export const App = () => {
                 <Route path='/reset-password/:page' element={<ResetPassword />} />
                 <Route path='*' element={<Error />} />
             </Routes>
+            <CookiesBanner />
             <Footer />
         </Router>
     );

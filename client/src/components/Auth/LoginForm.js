@@ -51,6 +51,7 @@ const LoginForm = ({ onToggle, onLogin }) => {
         setMessage('');
 
         window.location = '/private-area/account-details';
+        
         // remove isRegistered item from sessionStorage (if exists)
         sessionStorage.removeItem('isRegistered');
     }
@@ -66,14 +67,14 @@ const LoginForm = ({ onToggle, onLogin }) => {
             <div className='textbox'>
                 <label htmlFor='email'>Email</label>
                 <input
-                    type='text' id='email' name='email' placeholder='Insert email'
+                    type='text' id='email' name='email' placeholder='Enter your email'
                     value={email} onChange={(e) => setEmail(e.target.value)}
                 />
             </div>
             <div className='textbox'>
                 <label htmlFor='password'>Password</label>
                 <input
-                    type='password' id='password' name='password' placeholder='Insert password'
+                    type='password' id='password' name='password' placeholder='Enter password'
                     value={password} onChange={(e) => setPassword(e.target.value)}
                 />
             </div>

@@ -7,9 +7,9 @@
     "node": "v16.13.0"
   },
   "scripts": {
-    "start": "node server/index.js",
-    "build": "cd client && npm install && npm run build",
-    "dev": "nodemon server/index.js"
+    "start": "node index.js",
+    "build": "cd ../client && npm install && npm run build",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
