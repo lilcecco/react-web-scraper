@@ -17,7 +17,7 @@ exports.createCheckoutSession = async (req, res) => {
       {
         price: priceId,
         quantity: 1,
-      },
+      }
     ],
     mode: 'subscription',
     allow_promotion_codes: true, // enter coupon field
