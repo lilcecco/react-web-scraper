@@ -177,7 +177,7 @@ exports.scrapeDataFromGoogleMaps = (req, res) => {
 
             (async () => {
                 // init browser and page
-                const browser = await puppeteer.launch();
+                const browser = await puppeteer.launch({ headless: false });
                 const page = await browser.newPage();
 
                 // set page dimentions
