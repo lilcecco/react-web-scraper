@@ -31,8 +31,11 @@ app.use((req, res, next) => {
 app.use(cookeiParser());
 
 db.connect((err) => {
-    if (err) throw err; // da cambiare
-    console.log("Connected...");
+    if (err) {
+        console.error('Database connection failed:', err.message);
+        return;
+    }
+    console.log("Connected to database...");
 });
 
 app.use('/api/data', require('./routes/data'));
